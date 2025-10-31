@@ -27,6 +27,8 @@ assignment [Memory Hierarchy Simulation - Part I](https://northeastern.instructu
 * [ ] add a cache so that some number of messages are stored in a paged structure 
   in memory
   
+  * in either a file per message stored in a folder, or a block per message in a single file
+  
   * every message that is sent is stored in the cache and *also* written to disk
   
   * retrieve message should always look in the cache first. if not in the cache then load from disk and save in cache
