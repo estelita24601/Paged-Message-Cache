@@ -1,20 +1,24 @@
 CC = gcc
 CFLAGS = -Wall
 
-.PHONY: all test run clean
+.PHONY: clean
 .DEFAULT_TARGET := all
 
-all: messages.c bst.c
-	${CC} ${CFLAGS} $^ -o message
-	./message
+all: main
 
-test: messages.c bst.c tests.c
-	${CC} ${CFLAGS} $^ -o tests
-	./tests
+main: main.c
+	${CC} ${CFLAGS} $^ -o main
 
-run: all
+# all: messages.c bst.c
+# 	${CC} ${CFLAGS} $^ -o message
+# 	./message
+
+# test: messages.c bst.c tests.c
+# 	${CC} ${CFLAGS} $^ -o tests
+# 	./tests
+
+# run: all
 
 clean:
 	rm -f *.o
-	rm -f *.txt
-	rm -f tests
+	rm -f main
