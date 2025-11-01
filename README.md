@@ -18,4 +18,8 @@ todo:
     - right right
     - left left
     - left right
-  - update add and remove functions to rotate nodes if needed
+  - update add and remove functions to rotate nodes in order to keep bst balanced
+- maybe rename data folder as our "message store" or something that matches the assignment more?
+- config file stuff
+  - do we want all stuff in one config file in the top and then `main.c` and `message.c` all read from the same config file?
+  - or config file only for stuff `main.c` needs and then a separate one for the stuff that `message.c` needs and so forth?
