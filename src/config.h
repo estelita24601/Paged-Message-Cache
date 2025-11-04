@@ -9,7 +9,7 @@
 #define MAX_CONTENT_SIZE (STRING_SIZE - MAX_SENDER_SIZE - MAX_RECEIVER_SIZE)
 
 // globals for how to save messages to the disk as a CSV string
-#define MESSAGE_FILENAME_FORMAT "../data/message%d.txt"  // where %d is the message id number
+#define MESSAGE_FILENAME_FORMAT "data/message%d.txt"  // where %d is the message id number - is in relation to cwd of where the program starts so the Makefile
 #define TIME_FORMAT "%Y-%m-%d %H:%M:%S"
 #define TIME_FORMAT_LEN 19  // low priority todo: make this not hardcoded anymore?
 
