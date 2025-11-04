@@ -10,7 +10,6 @@
 #define _XOPEN_SOURCE 700
 
 #include <math.h>
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,7 +20,9 @@
 
 static int NEXT_ID;
 static const char* NEXT_ID_PATH = "../data/_NEXT_ID.txt";
-static const char* MESSSAGE_FILENAME_FORMAT = "../data/message%d.txt"; //todo? get this from config file instead?
+static const char* MESSAGE_FILENAME_FORMAT = "../data/message%d.txt";  // todo? get this from config file instead?
+static const char* TIME_FORMAT = "%Y-%m-%d %H:%M:%S";
+static const int TIME_FORMAT_LEN = 19;
 
 /**
  * @brief Gets the next available message ID and updates the counter
@@ -55,7 +56,6 @@ int get_next_id() {
     return NEXT_ID;
 }
 
-
 /**
  * @brief Creates a message object from its constituent parts
  *
@@ -67,8 +67,7 @@ int get_next_id() {
  * @param sentFlag Whether the message has been delivered
  * @return message_t* A newly allocated message object, or NULL if sender/receiver are invalid
  */
-message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* content, time_t time_sent,
-                                 bool sentFlag) {
+message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* content, time_t time_sent, bool sentFlag) {
     // first do null checks
     if (sender == NULL || receiver == NULL) {
         return NULL;
@@ -85,7 +84,7 @@ message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* con
     message_t* msg = malloc(sizeof(message_t));
 
     msg->id = id;
-    msg->time_sent = time_sent;
+    msg->sentTime = time_sent;
     msg->sender = strdup(sender);
     msg->receiver = strdup(receiver);
     msg->sentFlag = sentFlag;
@@ -93,7 +92,6 @@ message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* con
 
     return msg;
 }
-
 
 /**
  * @brief Construct a message element with all values input.
@@ -106,12 +104,11 @@ message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* con
 message_t* create_msg(char* sender, char* receiver, char* content) {
     time_t now;
     time(&now);
-    int id = get_next_id(ID_FILE);
+    int id = get_next_id();
     bool sentFlag = false;
 
     return create_msg_from_parts(id, sender, receiver, content, now, sentFlag);
 }
-
 
 /**
  * @brief Frees the memory allocated for a message struct
@@ -142,7 +139,6 @@ char* parse_string_token(const char* token) {
     }
 }
 
-
 /**
  * @brief takes a string token and turns it into a bool
  *
@@ -160,7 +156,6 @@ bool parse_bool_token(const char* token) {
     }
 }
 
-
 /**
  * @brief Parses a string token for time_sent in the format specified by TIME_FORMAT
  *
@@ -170,10 +165,9 @@ bool parse_bool_token(const char* token) {
 void parse_time_token(const char* token, time_t* parsed_time) {
     struct tm tm_sent;
     memset(&tm_sent, 0, sizeof(struct tm));  // initialize
-    strptime(token, TIME_FORMAT, &tm_sent); //fixme? what is the TIME_FORMAT now?
+    strptime(token, TIME_FORMAT, &tm_sent);  // fixme? what is the TIME_FORMAT now?
     *parsed_time = mktime(&tm_sent);
 }
-
 
 /**
  * @brief Appends a token to a string with a comma separator
@@ -251,8 +245,8 @@ message_t* create_msg_from_str(const char* input_str) {
                 content = strdup("N/A");
             } else {
                 content = strdup(token);
-                //content = malloc(sizeof(char) * strlen(token) + 1)
-                //strcpy(content, token)
+                // content = malloc(sizeof(char) * strlen(token) + 1)
+                // strcpy(content, token)
             }
         } else {  // i>5 means multiple tokens in the content field
             // append to the end of existing content and don't forget to add comma back in
@@ -279,6 +273,38 @@ message_t* create_msg_from_str(const char* input_str) {
     return msg;
 }
 
+char* msg_to_csv(message_t* msg) {
+    if (msg == NULL) {
+        return NULL;
+    }
+
+    // calculate length for csv string
+    int len = 0;
+
+    if (msg->id == 0) {
+        len += 1;
+    } else {
+        len += log10(msg->id) + 1;
+    }
+    len += strlen(msg->sender);
+    len += strlen(msg->receiver);
+    len += strlen(msg->content);
+    len += TIME_FORMAT_LEN;
+    len += 1;  // bool prints as one digit number 0 or 1
+    len += 5;  // 6 fields in msg object means 5 commas in csv
+    char* csv_str = malloc(sizeof(char) * (len + 1));
+
+    // turn time_t into formatted string
+    struct tm* tm = localtime(&msg->sentTime);
+    char time[TIME_FORMAT_LEN + 1];
+    strftime(time, TIME_FORMAT_LEN + 1, TIME_FORMAT, tm);
+
+    // NEW EXPECTED FORMAT: id,sender,receiver,time_sent,delivered_flag,content
+    sprintf(csv_str, "%d,%s,%s,%s,%d,%s", msg->id, msg->sender, msg->receiver, time, msg->sentFlag, msg->content);
+
+    return csv_str;
+}
+
 /**
  * @brief store a message element to a message store on disk.
  *
@@ -295,13 +321,13 @@ bool store_msg(message_t* msg) {
 
     if (existing_msg == NULL) {  // message isnt in the store yet
         // we can just append to the end of the file
-        FILE* store = fopen(STORE_PATH, "a"); // TODO: need to adjust to store in file + id#
+        FILE* store = fopen(STORE_PATH, "a");  // TODO: need to adjust to store in file + id#
         if (store == NULL) {
             printf("ERROR: unable to open message store in append mode\n");
             return false;
         }
 
-        char* msg_csv = msg_to_str(msg);
+        char* msg_csv = msg_to_csv(msg);
         if (msg_csv != NULL) {
             fprintf(store, "%s\n", msg_csv);
             free(msg_csv);
@@ -339,7 +365,6 @@ char* message_to_pretty_str(message_t* message) {
     return str;
 }
 
-
 /**
  * @brief
  *
@@ -358,33 +383,29 @@ int compare_messages(message_t* msg1, message_t* msg2) {
     return 0;
 }
 
-
 // todo: retrieve by message ID #
 // each message is now in its own file
-// MESSSAGE_FILENAME_FORMAT:message%d.txt
-/**
- * @brief 
- * 
- * @param id 
- * @return message_t* 
- */
-/*
-message_t* retrieve_msg(int id) {
-    char* expected_filename = malloc(sizeof(char) *( strlen(MESSAGE_FILENAME_FORMAT) + log10(id) + 2));
-    sprintf(expected_filename, MESSAGE_FILENAME_FORMAT, id);
+// MESSAGE_FILENAME_FORMAT:message%d.txt
+// /**
+//  * @brief
+//  *
+//  * @param id
+//  * @return message_t*
+//  */
+// message_t* retrieve_msg(int id) {
+//     char* expected_filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(id) + 2));
+//     sprintf(expected_filename, MESSAGE_FILENAME_FORMAT, id);
 
-    // initialize message object as null
-    message_t* msg = NULL;
+//     // initialize message object as null
+//     message_t* msg = NULL;
 
-    // try to open the file
-    FILE* msg_file = fopen(expected_filename, "r");
-    if(msg_file == NULL){
-        printf("WARNING: unable to find message with id = %d in the store\n", id);
-    }else{
-        msg = create_msg_from_str()
-    }
+//     // try to open the file
+//     FILE* msg_file = fopen(expected_filename, "r");
+//     if (msg_file == NULL) {
+//         printf("WARNING: unable to find message with id = %d in the store\n", id);
+//     } else {
+//     }
 
-    free(expected_filename);
-    return msg;
-}
-*/
+//     free(expected_filename);
+//     return msg;
+// }
