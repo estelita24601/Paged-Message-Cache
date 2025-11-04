@@ -165,7 +165,7 @@ bool parse_bool_token(const char* token) {
 void parse_time_token(const char* token, time_t* parsed_time) {
     struct tm tm_sent;
     memset(&tm_sent, 0, sizeof(struct tm));  // initialize
-    strptime(token, TIME_FORMAT, &tm_sent);  // fixme? what is the TIME_FORMAT now?
+    strptime(token, TIME_FORMAT, &tm_sent);
     *parsed_time = mktime(&tm_sent);
 }
 
@@ -306,6 +306,18 @@ char* msg_to_csv(message_t* msg) {
 }
 
 /**
+ * @brief use the id number to create the properly formatted filename for this message
+ *
+ * @param msg_id - int
+ * @return char* - filename for this message ON THE HEAP
+ */
+char* create_msg_filename(int msg_id) {
+    char* filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(msg_id) + 2));
+    sprintf(filename, MESSAGE_FILENAME_FORMAT, msg_id);
+    return filename;
+}
+
+/**
  * @brief store a message element to a message store on disk.
  *
  * @param msg message_t* - pointer to the message element
@@ -316,31 +328,29 @@ bool store_msg(message_t* msg) {
     if (msg == NULL) {
         return false;
     }
+    char* expected_filename = create_msg_filename(msg->id);
 
-    message_t* existing_msg = retrieve_msg(msg->id);
+    FILE* file = fopen(expected_filename, "w");
 
-    if (existing_msg == NULL) {  // message isnt in the store yet
-        // we can just append to the end of the file
-        FILE* store = fopen(STORE_PATH, "a");  // TODO: need to adjust to store in file + id#
-        if (store == NULL) {
-            printf("ERROR: unable to open message store in append mode\n");
-            return false;
-        }
+    if (file == NULL) {
+        printf("ERROR: unable to write to %s\n", expected_filename);
+        free(expected_filename);
+        return false;
+    } else {
+        bool success;
 
         char* msg_csv = msg_to_csv(msg);
         if (msg_csv != NULL) {
-            fprintf(store, "%s\n", msg_csv);
+            fprintf(file, "%s", msg_csv);  // QUESTION: should this have \n at the end?
             free(msg_csv);
-            fclose(store);
-            return true;
+            success = true;
         } else {
-            printf("WARNING: unable to turn message_t object into a csv string\n");
-            return false;
+            printf("ERROR: unable to turn message object into a csv string\n");
+            success = false;
         }
-    } else {  // message is already in the store
-        // we need to edit/replace the existing message
-        bool success = replace_msg(msg, msg->id);
-        free_msg(existing_msg);
+
+        free(expected_filename);
+        fclose(file);
         return success;
     }
 }
@@ -390,8 +400,7 @@ int compare_messages(message_t* msg1, message_t* msg2) {
  * @return message_t*
  */
 message_t* retrieve_msg(int id) {
-    char* expected_filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(id) + 2));
-    sprintf(expected_filename, MESSAGE_FILENAME_FORMAT, id);
+    char* expected_filename = create_msg_filename(id);
 
     // initialize message object as null
     message_t* msg = NULL;
