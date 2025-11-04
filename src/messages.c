@@ -386,26 +386,33 @@ int compare_messages(message_t* msg1, message_t* msg2) {
 // todo: retrieve by message ID #
 // each message is now in its own file
 // MESSAGE_FILENAME_FORMAT:message%d.txt
-// /**
-//  * @brief
-//  *
-//  * @param id
-//  * @return message_t*
-//  */
-// message_t* retrieve_msg(int id) {
-//     char* expected_filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(id) + 2));
-//     sprintf(expected_filename, MESSAGE_FILENAME_FORMAT, id);
+/**
+ * @brief
+ *
+ * @param id
+ * @return message_t*
+ */
+message_t* retrieve_msg(int id) {
+    char* expected_filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(id) + 2));
+    sprintf(expected_filename, MESSAGE_FILENAME_FORMAT, id);
 
-//     // initialize message object as null
-//     message_t* msg = NULL;
+    // initialize message object as null
+    message_t* msg = NULL;
 
-//     // try to open the file
-//     FILE* msg_file = fopen(expected_filename, "r");
-//     if (msg_file == NULL) {
-//         printf("WARNING: unable to find message with id = %d in the store\n", id);
-//     } else {
-//     }
+    // try to open the file
+    FILE* msg_file = fopen(expected_filename, "r");
+    if (msg_file == NULL) {
+        printf("WARNING: unable to find message with id = %d in the store\n", id);
+    } else {
+        char* buffer = malloc(sizeof(char) * MAX_INPUT_LENGTH);
+        if (fgets(buffer, MAX_INPUT_LENGTH, msg_file) == NULL) {
+            printf("WARNING: unable to read contents of %s or contents do not exist\n", expected_filename);
+        } else {
+            msg = create_msg_from_str(buffer);
+        }
+        free(buffer);
+    }
 
-//     free(expected_filename);
-//     return msg;
-// }
+    free(expected_filename);
+    return msg;
+}
