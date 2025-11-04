@@ -17,12 +17,7 @@
 #include <time.h>
 
 #include "bst.h"
-
-static int NEXT_ID;
-static const char* NEXT_ID_PATH = "../data/_NEXT_ID.txt";
-static const char* MESSAGE_FILENAME_FORMAT = "../data/message%d.txt";  // todo? get this from config file instead?
-static const char* TIME_FORMAT = "%Y-%m-%d %H:%M:%S";
-static const int TIME_FORMAT_LEN = 19;
+#include "config.h"
 
 /**
  * @brief Gets the next available message ID and updates the counter

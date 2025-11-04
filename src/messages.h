@@ -14,8 +14,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAX_INPUT_LENGTH 1024
-#define STORE_PATH "message_store/messages.csv"
+#include "config.h"
+
+static int NEXT_ID;
 
 // forward declaration of bst_t
 typedef struct bst_t bst_t;
