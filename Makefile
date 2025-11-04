@@ -22,8 +22,8 @@ main: $(SRC_FILES)
 # 	./tests
 
 test:  $(TEST_FILES)
-	${CC} ${CFLAGS} $^ -o tests
-	./tests
+	${CC} ${CFLAGS} $^ -o test
+	./test
 
 # run: all
 

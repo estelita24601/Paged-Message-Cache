@@ -257,7 +257,7 @@ char* __bst__update_str(message_t* message, char* str) {
     if (message == NULL) {
         msg_str = (char*) "NULL";  // used by BREATH_FIRST to print null nodes, others ignore this.
     } else {
-        msg_str = message_to_str(message);
+        msg_str = message_to_pretty_str(message);
     }
     str = realloc(str, sizeof(char) * (strlen(str) + strlen(msg_str) + 5));
     if (strlen(str) > 0) {

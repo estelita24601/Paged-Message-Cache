@@ -6,6 +6,9 @@
  *
  */
 
+
+#define _XOPEN_SOURCE 700
+
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -14,8 +17,6 @@
 #include <time.h>
 
 #include "messages.h"
-
-#define _XOPEN_SOURCE 700
 
 /**
  * @brief Gets the next available message ID and updates the counter
