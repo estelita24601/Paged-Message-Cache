@@ -286,28 +286,37 @@ message_t* create_msg_from_str(const char* input_str) {
  * @param filename char* - name of the file to store the message
  * @return int - status code (0 for success, -1 for failure)
  */
-int store_msg(message_t* msg, char* filename) {
+bool store_msg(message_t* msg) {
     if (msg == NULL) {
-        fprintf(stderr, "ERROR: message is NULL\n");
-        return -1;
+        return false;
     }
 
-    FILE* wFile = fopen(filename, "a");  // overwrite or write new to file - cleaning file at make
-    if (wFile == NULL) {
-        fprintf(stderr, "ERROR: could not open file for writing\n");
-        return -1;
+    message_t* existing_msg = retrieve_msg(msg->id);
+
+    if (existing_msg == NULL) {  // message isnt in the store yet
+        // we can just append to the end of the file
+        FILE* store = fopen(STORE_PATH, "a"); // TODO: need to adjust to store in file + id#
+        if (store == NULL) {
+            printf("ERROR: unable to open message store in append mode\n");
+            return false;
+        }
+
+        char* msg_csv = msg_to_str(msg);
+        if (msg_csv != NULL) {
+            fprintf(store, "%s\n", msg_csv);
+            free(msg_csv);
+            fclose(store);
+            return true;
+        } else {
+            printf("WARNING: unable to turn message_t object into a csv string\n");
+            return false;
+        }
+    } else {  // message is already in the store
+        // we need to edit/replace the existing message
+        bool success = replace_msg(msg, msg->id);
+        free_msg(existing_msg);
+        return success;
     }
-
-    // Write the message data to the file
-    fprintf(wFile, "%d|", msg->id);  // fprintf() has issues when printing when there is no null terminator '\0'
-    fprintf(wFile, "%ld|", msg->sentTime);
-    fprintf(wFile, "%s|", msg->sender);
-    fprintf(wFile, "%s|", msg->receiver);
-    fprintf(wFile, "%s|", msg->content);
-    fprintf(wFile, "%d\n", msg->sentFlag);
-
-    fclose(wFile);
-    return 0;
 }
 
 /**
@@ -359,6 +368,7 @@ int compare_messages(message_t* msg1, message_t* msg2) {
  * @param id 
  * @return message_t* 
  */
+/*
 message_t* retrieve_msg(int id) {
     char* expected_filename = malloc(sizeof(char) *( strlen(MESSAGE_FILENAME_FORMAT) + log10(id) + 2));
     sprintf(expected_filename, MESSAGE_FILENAME_FORMAT, id);
@@ -377,3 +387,4 @@ message_t* retrieve_msg(int id) {
     free(expected_filename);
     return msg;
 }
+*/

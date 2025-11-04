@@ -97,7 +97,6 @@ char* parse_string_token(const char* token);
  */
 bool parse_bool_token(const char* token);
 
-
 /**
  * @brief Parses a string token for time_sent in the format specified by TIME_FORMAT
  *
@@ -145,7 +144,7 @@ message_t* create_msg_from_str(const char* input_str);
  * @param filename char* - name of the file to store the message
  * @return int - status code (0 for success, -1 for failure)
  */
-int store_msg(message_t* msg, char* filename);
+bool store_msg(message_t* msg);
 
 
 /**
