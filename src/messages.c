@@ -358,7 +358,7 @@ bool store_msg(message_t* msg) {
  * @return a string representation of the message
  */
 char* message_to_pretty_str(message_t* message) {
-    char* str = (char*) malloc(MAX_INPUT_LENGTH * sizeof(char));
+    char* str = (char*) malloc(MAX_CSV_LENGTH * sizeof(char));
     if (str == NULL) {
         fprintf(stderr, "ERROR: dynamic memory was not able to be allocated");
         exit(1);
@@ -406,8 +406,8 @@ message_t* retrieve_msg(int id) {
     if (msg_file == NULL) {
         printf("WARNING: unable to find message with id = %d in the store\n", id);
     } else {
-        char* buffer = malloc(sizeof(char) * MAX_INPUT_LENGTH);
-        if (fgets(buffer, MAX_INPUT_LENGTH, msg_file) == NULL) {
+        char* buffer = malloc(sizeof(char) * MAX_CSV_LENGTH);
+        if (fgets(buffer, MAX_CSV_LENGTH, msg_file) == NULL) {
             printf("WARNING: unable to read contents of %s or contents do not exist\n", expected_filename);
         } else {
             msg = create_msg_from_str(buffer);
