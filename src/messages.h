@@ -1,4 +1,4 @@
- /**
+/**
  * @file messages.h / header file for Messages.
  * @authors Estelita Chen & Lori Kim / CS5600 / Northeastern University
  * @brief
@@ -9,30 +9,28 @@
 #ifndef MESSAGES_H
 #define MESSAGES_H
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <time.h>
 
-
 #define MAX_INPUT_LENGTH 1024
+#define STORE_PATH "message_store/messages.csv"
 
 // forward declaration of bst_t
 typedef struct bst_t bst_t;
-
 
 /**
  * @brief Represents a message.
  */
 typedef struct message_t {
-    int id; // id of the message
-    time_t sentTime; // time the message was sent
-    char* sender; // sender of the message
-    char* receiver; // receiver of the message
-    char* content; // content of the message
-    bool sentFlag; // flag indicating if the message has been delivered
+    int id;           // id of the message
+    time_t sentTime;  // time the message was sent
+    char* sender;     // sender of the message
+    char* receiver;   // receiver of the message
+    char* content;    // content of the message
+    bool sentFlag;    // flag indicating if the message has been delivered
 } message_t;
-
 
 /**
  * @brief Gets the next available message ID and updates the counter
@@ -43,7 +41,6 @@ typedef struct message_t {
  * @return int The next available message ID
  */
 int get_next_id();
-
 
 /**
  * @brief Creates a message object from its constituent parts
@@ -56,9 +53,7 @@ int get_next_id();
  * @param sentFlag Whether the message has been delivered
  * @return message_t* A newly allocated message object, or NULL if sender/receiver are invalid
  */
-message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* content, time_t time_sent,
-                                 bool sentFlag);
-
+message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* content, time_t time_sent, bool sentFlag);
 
 /**
  * @brief Construct a message element with all values input.
@@ -70,14 +65,12 @@ message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* con
  */
 message_t* create_msg(char* sender, char* receiver, char* content);
 
-
 /**
  * @brief Frees the memory allocated for a message struct
  *
  * @param message the message struct to free
  */
-void free_message(message_t *message);
-
+void free_message(message_t* message);
 
 /**
  * @brief Parses a string token, handling NULL and empty string cases
@@ -86,7 +79,6 @@ void free_message(message_t *message);
  * @return char* A newly allocated copy of the token, or NULL if token is NULL or empty
  */
 char* parse_string_token(const char* token);
-
 
 /**
  * @brief takes a string token and turns it into a bool
@@ -105,7 +97,6 @@ bool parse_bool_token(const char* token);
  */
 void parse_time_token(const char* token, time_t* parsed_time);
 
-
 /**
  * @brief Appends a token to a string with a comma separator
  *
@@ -114,7 +105,6 @@ void parse_time_token(const char* token, time_t* parsed_time);
  * @return char* The new string containing original_str + "," + token
  */
 char* append_with_comma(char* original_str, const char* token);
-
 
 /**
  * @brief Creates a message object from its CSV string representation
@@ -135,8 +125,6 @@ char* append_with_comma(char* original_str, const char* token);
  */
 message_t* create_msg_from_str(const char* input_str);
 
-
-
 /**
  * @brief store a message element to a message store on disk.
  *
@@ -146,7 +134,6 @@ message_t* create_msg_from_str(const char* input_str);
  */
 bool store_msg(message_t* msg);
 
-
 /**
  * @brief Returns a string value representing the message. Note: need to free the returned string after use.
  *
@@ -155,7 +142,6 @@ bool store_msg(message_t* msg);
  */
 char* message_to_pretty_str(message_t* message);
 
-
 /**
  * @brief Compares two message structs based on message id
  *
@@ -163,19 +149,17 @@ char* message_to_pretty_str(message_t* message);
  * @param msg2 the second message to compare
  * @return -1 if the msg1 comes before msg2, 0 if they are equal, 1 if msg1 comes after msg2
  */
-int compare_messages(message_t *msg1, message_t *msg2);
-
+int compare_messages(message_t* msg1, message_t* msg2);
 
 // todo: retrieve by message ID #
 // each message is now in its own file
-// MESSSAGE_FILENAME_FORMAT:message%d.txt
+// MESSAGE_FILENAME_FORMAT:message%d.txt
 /**
- * @brief 
- * 
- * @param id 
- * @return message_t* 
+ * @brief
+ *
+ * @param id
+ * @return message_t*
  */
 message_t* retrieve_msg(int id);
 
-
-#endif // MESSAGES_H
+#endif  // MESSAGES_H
