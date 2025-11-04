@@ -1,9 +1,8 @@
-/*
- * messages.c / source code of Messages.
- *
- * Lori Kim / CS5600 / Northeastern University
- *
- * Fall 2025 / Sep 28, 2025
+/**
+ * @file messages.c / source code for Messages.
+ * @authors Estelita Chen & Lori Kim / CS5600 / Northeastern University
+ * @brief
+ * @date 2025-10-31
  *
  */
 
@@ -54,51 +53,73 @@ int get_next_id() {
 }
 
 /**
- * @brief Construct a message element with all values input. Note: do not need to free this element since the values
- * stored are in stack.
+ * @brief Creates a message object from its constituent parts
  *
- * @param id int - id of the message element
+ * @param id The unique identifier for the message
+ * @param sender The name of the message sender
+ * @param receiver The name of the message receiver
+ * @param content The message content (if NULL or empty, will be set to "N/A")
+ * @param time_sent The timestamp when the message was sent
+ * @param delivered_flag Whether the message has been delivered
+ * @return message_t* A newly allocated message object, or NULL if sender/receiver are invalid
+ */
+message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* content, time_t time_sent,
+                                 bool delivered_flag) {
+    // first do null checks
+    if (sender == NULL || receiver == NULL) {
+        return NULL;
+    }
+    // make sure sender/receiver aren't empty strings
+    else if (strlen(sender) == 0 || strlen(receiver) == 0) {
+        return NULL;
+    }
+    // allow "empty" content but fill it in with something
+    if (content == NULL || strlen(content) == 0) {
+        content = "N/A";
+    }
+
+    message_t* msg = malloc(sizeof(message_t));
+
+    msg->id = id;
+    msg->time_sent = time_sent;
+    msg->sender = strdup(sender);
+    msg->receiver = strdup(receiver);
+    msg->delivered_flag = delivered_flag;
+    msg->content = strdup(content);
+
+    return msg;
+}
+
+/**
+ * @brief Construct a message element with all values input.
+ *
  * @param sender char* - sender of the message
  * @param receiver char* - receiver of the message
  * @param content char* - content of the message
  * @return message_t* - pointer to the constructed message element
  */
-message_t* create_msg(int id, char* sender, char* receiver, char* content) {
-    message_t* message = calloc(1, sizeof(message_t));
-    if (message == NULL) {
-        fprintf(stderr, "ERROR: dynamic memory was not able to be allocated");
-        exit(1);
-    }
-    message->id = id;
-    time_t now = time(NULL);
-    message->sentTime = now;  // calculate at time of construction
-    message->sender = sender;
-    message->receiver = receiver;
-    message->content = content;
-    message->sentFlag = false;
-    return message;  // need to free after use
+message_t* create_msg(char* sender, char* receiver, char* content) {
+    time_t now;
+    time(&now);
+    int id = get_next_id(ID_FILE);
+    bool delivered_flag = false;
+
+    return create_msg_from_parts(id, sender, receiver, content, now, delivered_flag);
 }
 
 /**
- * @brief Construct a message element. Note: need to free this construct as the sender, receiver, content will most
- * likely be stored on the heap unless values are known to be static.
+ * @brief Frees the memory allocated for a message struct
  *
- * @return message_t* - pointer to the constructed message element
+ * @param message the message struct to free
  */
-message_t* create_empty_msg() {
-    message_t* message = calloc(1, sizeof(message_t));
-    if (message == NULL) {
-        fprintf(stderr, "ERROR: dynamic memory was not able to be allocated");
-        exit(1);
+void free_msg(message_t* msg) {
+    if (msg == NULL) {
+        return;
     }
-
-    message->id = -1;
-    message->sentTime = 0;  // calculate at time of construction
-    message->sender = NULL;
-    message->receiver = NULL;
-    message->content = NULL;
-    message->sentFlag = false;
-    return message;  // need to free after use
+    free(msg->sender);
+    free(msg->receiver);
+    free(msg->content);
+    free(msg);
 }
 
 /**
@@ -170,19 +191,6 @@ int compare_messages(message_t* msg1, message_t* msg2) {
     return 0;
 }
 
-/**
- * @brief Frees the memory allocated for a message struct
- *
- * @param message the message struct to free
- */
-void free_message(message_t* message) {
-    if (message == NULL) return;
-
-    free(message->sender);
-    free(message->receiver);
-    free(message->content);
-    // free(message);
-}
 
 /**
  * @brief Appends a token to a string with a comma separator

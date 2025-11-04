@@ -1,9 +1,8 @@
-/*
- * bst.c / source code for BST.
- *
- * Lori Kim / CS5600 / Northeastern University
- *
- * Fall 2025 / Sep 28, 2025
+/**
+ * @file bst.c / source code for BST.
+ * @authors Estelita Chen & Lori Kim / CS5600 / Northeastern University
+ * @brief
+ * @date 2025-10-31
  *
  */
 

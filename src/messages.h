@@ -49,14 +49,6 @@ message_t* create_msg(int id, char* sender, char* receiver, char* content);
 
 
 /**
- * @brief Construct a message element.
- *
- * @return message_t* - pointer to the constructed message element
- */
-message_t* create_empty_msg();
-
-
-/**
  * @brief store a message element to a message store on disk.
  *
  * @param msg message_t* - pointer to the message element
