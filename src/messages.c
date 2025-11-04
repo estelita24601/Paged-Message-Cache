@@ -6,9 +6,6 @@
  *
  */
 
-#include "messages.h"
-#define _XOPEN_SOURCE 700
-
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -16,8 +13,9 @@
 #include <string.h>
 #include <time.h>
 
-#include "bst.h"
-#include "config.h"
+#include "messages.h"
+
+#define _XOPEN_SOURCE 700
 
 /**
  * @brief Gets the next available message ID and updates the counter
@@ -49,6 +47,18 @@ int get_next_id() {
     }
 
     return NEXT_ID;
+}
+
+/**
+ * @brief use the id number to create the properly formatted filename for this message
+ *
+ * @param msg_id - int
+ * @return char* - filename for this message ON THE HEAP
+ */
+char* create_msg_filename(int msg_id) {
+    char* filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(msg_id) + 2));
+    sprintf(filename, MESSAGE_FILENAME_FORMAT, msg_id);
+    return filename;
 }
 
 /**
@@ -300,17 +310,6 @@ char* msg_to_csv(message_t* msg) {
     return csv_str;
 }
 
-/**
- * @brief use the id number to create the properly formatted filename for this message
- *
- * @param msg_id - int
- * @return char* - filename for this message ON THE HEAP
- */
-char* create_msg_filename(int msg_id) {
-    char* filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(msg_id) + 2));
-    sprintf(filename, MESSAGE_FILENAME_FORMAT, msg_id);
-    return filename;
-}
 
 /**
  * @brief store a message element to a message store on disk.

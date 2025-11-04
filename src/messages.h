@@ -44,6 +44,14 @@ typedef struct message_t {
 int get_next_id();
 
 /**
+ * @brief use the id number to create the properly formatted filename for this message
+ *
+ * @param msg_id - int
+ * @return char* - filename for this message ON THE HEAP
+ */
+char* create_msg_filename(int msg_id);
+
+/**
  * @brief Creates a message object from its constituent parts
  *
  * @param id The unique identifier for the message
