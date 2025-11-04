@@ -2,11 +2,14 @@
  * @file messages.c / source code for Messages.
  * @authors Estelita Chen & Lori Kim / CS5600 / Northeastern University
  * @brief
- * @date 2025-10-31
+ * @date Nov 11, 2025 / Fall 2025
  *
  */
 
 #include "messages.h"
+#define _XOPEN_SOURCE 700
+
+#include <math.h>
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -18,8 +21,8 @@
 
 static int NEXT_ID;
 static const char* NEXT_ID_PATH = "../data/_NEXT_ID.txt";
+static const char* MESSSAGE_FILENAME_FORMAT = "../data/message%d.txt"; //todo? get this from config file instead?
 
-// todo: use this function when creating new messages to prevent messages with duplicate id numbers
 /**
  * @brief Gets the next available message ID and updates the counter
  *
@@ -52,6 +55,7 @@ int get_next_id() {
     return NEXT_ID;
 }
 
+
 /**
  * @brief Creates a message object from its constituent parts
  *
@@ -60,11 +64,11 @@ int get_next_id() {
  * @param receiver The name of the message receiver
  * @param content The message content (if NULL or empty, will be set to "N/A")
  * @param time_sent The timestamp when the message was sent
- * @param delivered_flag Whether the message has been delivered
+ * @param sentFlag Whether the message has been delivered
  * @return message_t* A newly allocated message object, or NULL if sender/receiver are invalid
  */
 message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* content, time_t time_sent,
-                                 bool delivered_flag) {
+                                 bool sentFlag) {
     // first do null checks
     if (sender == NULL || receiver == NULL) {
         return NULL;
@@ -84,11 +88,12 @@ message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* con
     msg->time_sent = time_sent;
     msg->sender = strdup(sender);
     msg->receiver = strdup(receiver);
-    msg->delivered_flag = delivered_flag;
+    msg->sentFlag = sentFlag;
     msg->content = strdup(content);
 
     return msg;
 }
+
 
 /**
  * @brief Construct a message element with all values input.
@@ -102,10 +107,11 @@ message_t* create_msg(char* sender, char* receiver, char* content) {
     time_t now;
     time(&now);
     int id = get_next_id(ID_FILE);
-    bool delivered_flag = false;
+    bool sentFlag = false;
 
-    return create_msg_from_parts(id, sender, receiver, content, now, delivered_flag);
+    return create_msg_from_parts(id, sender, receiver, content, now, sentFlag);
 }
+
 
 /**
  * @brief Frees the memory allocated for a message struct
@@ -120,6 +126,157 @@ void free_msg(message_t* msg) {
     free(msg->receiver);
     free(msg->content);
     free(msg);
+}
+
+/**
+ * @brief Parses a string token, handling NULL and empty string cases
+ *
+ * @param token The string token to parse
+ * @return char* A newly allocated copy of the token, or NULL if token is NULL or empty
+ */
+char* parse_string_token(const char* token) {
+    if (token == NULL || strlen(token) == 0) {
+        return NULL;
+    } else {
+        return strdup(token);
+    }
+}
+
+
+/**
+ * @brief takes a string token and turns it into a bool
+ *
+ * @param token The string token to parse ("0" or "1")
+ * @return true If token is "1"
+ * @return false If token is "0" or invalid
+ */
+bool parse_bool_token(const char* token) {
+    if (strcmp(token, "0") == 0) {
+        return false;
+    } else if (strcmp(token, "1") == 0) {
+        return true;
+    } else {
+        return NULL;  // this wasn't a valid boolean
+    }
+}
+
+
+/**
+ * @brief Parses a string token for time_sent in the format specified by TIME_FORMAT
+ *
+ * @param token The string token containing the time in format "%Y-%m-%d %H:%M:%S"
+ * @param parsed_time Pointer to time_t where the parsed time will be stored
+ */
+void parse_time_token(const char* token, time_t* parsed_time) {
+    struct tm tm_sent;
+    memset(&tm_sent, 0, sizeof(struct tm));  // initialize
+    strptime(token, TIME_FORMAT, &tm_sent); //fixme? what is the TIME_FORMAT now?
+    *parsed_time = mktime(&tm_sent);
+}
+
+
+/**
+ * @brief Appends a token to a string with a comma separator
+ *
+ * @param original_str The original string to append to (will be reallocated)
+ * @param token The token to append after a comma
+ * @return char* The new string containing original_str + "," + token
+ */
+char* append_with_comma(char* original_str, const char* token) {
+    int new_length = strlen(original_str) + strlen(token) + 2;  //+1 for null terminator and +1 for comma
+
+    char* new_str = realloc(original_str, sizeof(char) * new_length);
+    strcat(new_str, ",");
+    strcat(new_str, token);
+
+    return new_str;
+}
+
+/**
+ * @brief Creates a message object from its CSV string representation
+ *
+ * The expected CSV format is: id,sender,receiver,time_sent,delivered_flag,content
+ * Where:
+ * - id: numeric identifier
+ * - sender: non-empty string
+ * - receiver: non-empty string
+ * - time_sent: timestamp in format "%Y-%m-%d %H:%M:%S"
+ * - delivered_flag: 0 or 1
+ * - content: string (if empty will be set to "N/A")
+ *
+ * Note: If content contains commas, they will be preserved and properly handled
+ *
+ * @param input_str The CSV string to parse
+ * @return message_t* A newly allocated message object, or NULL if the string is invalid
+ */
+message_t* create_msg_from_str(const char* input_str) {
+    if (input_str == NULL) {
+        return NULL;
+    } else if (strlen(input_str) < 5) {
+        // there should at least be 5 commas
+        return NULL;
+    }
+
+    // make duplicate string so original isn't modified by strtok
+    char* csv_str = strdup(input_str);
+    // strip newline character if there is one
+    csv_str[strcspn(csv_str, "\n")] = '\0';
+
+    // empty variables for creating the message object
+    int id = -1;
+    char* sender = NULL;
+    char* receiver = NULL;
+    char* content = NULL;
+    time_t time_sent;
+    bool delivered_flag;
+
+    // NEW EXPECTED FORMAT: id,sender,receiver,time_sent,delivered_flag,content, more content, more content
+    char* token = strtok(csv_str, ",");
+    int i = 0;
+    while (token != NULL) {
+        // printf("%d-th token = %s\n", i, token);  // DEBUG PRINT
+
+        if (i == 0) {  // token = id
+            id = atoi(token);
+        } else if (i == 1) {  // token = sender
+            sender = parse_string_token(token);
+        } else if (i == 2) {  // token = receiver
+            receiver = parse_string_token(token);
+        } else if (i == 3) {  // token = time_sent
+            parse_time_token(token, &time_sent);
+        } else if (i == 4) {  // token = delivered_flag
+            delivered_flag = parse_bool_token(token);
+        } else if (i == 5) {  // token = content
+            if (strlen(token) == 0) {
+                content = strdup("N/A");
+            } else {
+                content = strdup(token);
+                //content = malloc(sizeof(char) * strlen(token) + 1)
+                //strcpy(content, token)
+            }
+        } else {  // i>5 means multiple tokens in the content field
+            // append to the end of existing content and don't forget to add comma back in
+            content = append_with_comma(content, token);
+            // content = content + "," + token
+        }
+
+        // try to get next token
+        token = strtok(NULL, ",");
+        i++;
+    }
+
+    message_t* msg;
+    if (i >= 6) {
+        msg = create_msg_from_parts(id, sender, receiver, content, time_sent, delivered_flag);
+    } else {
+        msg = NULL;  // not enough fields in the csv string
+    }
+
+    free(sender);
+    free(receiver);
+    free(content);
+    free(csv_str);
+    return msg;
 }
 
 /**
@@ -150,7 +307,7 @@ int store_msg(message_t* msg, char* filename) {
     fprintf(wFile, "%d\n", msg->sentFlag);
 
     fclose(wFile);
-    return 0;  // need to free after use
+    return 0;
 }
 
 /**
@@ -159,7 +316,7 @@ int store_msg(message_t* msg, char* filename) {
  * @param message the message to convert to a string
  * @return a string representation of the message
  */
-char* message_to_str(message_t* message) {
+char* message_to_pretty_str(message_t* message) {
     char* str = (char*) malloc(MAX_INPUT_LENGTH * sizeof(char));
     if (str == NULL) {
         fprintf(stderr, "ERROR: dynamic memory was not able to be allocated");
@@ -173,8 +330,9 @@ char* message_to_str(message_t* message) {
     return str;
 }
 
+
 /**
- * @brief Compares two message structs based on message id
+ * @brief
  *
  * @param msg1 the first message to compare
  * @param msg2 the second message to compare
@@ -192,99 +350,30 @@ int compare_messages(message_t* msg1, message_t* msg2) {
 }
 
 
+// todo: retrieve by message ID #
+// each message is now in its own file
+// MESSSAGE_FILENAME_FORMAT:message%d.txt
 /**
- * @brief Appends a token to a string with a comma separator
- *
- * @param original_str The original string to append to (will be reallocated)
- * @param token The token to append after a comma
- * @return char* The new string containing original_str + "," + token
+ * @brief 
+ * 
+ * @param id 
+ * @return message_t* 
  */
-char* append_with_comma(char* original_str, const char* token) {
-    int new_length = strlen(original_str) + strlen(token) + 2;  //+1 for null terminator and +1 for comma
+message_t* retrieve_msg(int id) {
+    char* expected_filename = malloc(sizeof(char) *( strlen(MESSAGE_FILENAME_FORMAT) + log10(id) + 2));
+    sprintf(expected_filename, MESSAGE_FILENAME_FORMAT, id);
 
-    char* new_str = realloc(original_str, sizeof(char) * new_length);
-    strcat(new_str, ",");
-    strcat(new_str, token);
+    // initialize message object as null
+    message_t* msg = NULL;
 
-    return new_str;
-}
-
-/**
- * @brief Retrieve a message element from a message store on disk.
- *
- * @param filename char* - name of the file to read the messages from
- * @param tree bst_t* - pointer to the binary search tree
- * @return int - status code (0 for success, -1 for failure)
- */
-int retrieve_msg(char* filename, bst_t* tree) {
-    FILE* rFile = fopen(filename, "r");  // overwrite or write new to file - cleaning file at make
-
-    if (rFile == NULL) {
-        fprintf(stderr, "ERROR: could not open file for reading");
-        return -1;
-    }
-    if (tree == NULL) {
-        fclose(rFile);
-        fprintf(stderr, "ERROR: bst tree is NULL");
-        return -1;
+    // try to open the file
+    FILE* msg_file = fopen(expected_filename, "r");
+    if(msg_file == NULL){
+        printf("WARNING: unable to find message with id = %d in the store\n", id);
+    }else{
+        msg = create_msg_from_str()
     }
 
-    char ch;
-    int wordCount = 0;
-    char temp[MAX_INPUT_LENGTH];
-    int i = 0;
-    int numOfMsgMembers = 6;  // id, sentTime, sender, receiver, content, sentFlag
-    message_t* bstMsg = create_empty_msg();
-
-    while ((ch = fgetc(rFile)) != EOF) {
-        if (ch == '|' || ch == '\n') {
-            temp[i] = '\0';  // convert delimiter to null terminator
-            // get words by delimiter and store into message struct
-            if (wordCount % numOfMsgMembers == 0) {
-                bstMsg->id = atoi(temp);
-            } else if (wordCount % numOfMsgMembers == 1) {
-                bstMsg->sentTime = (time_t) atol(temp);
-            } else if (wordCount % numOfMsgMembers == 2) {
-                bstMsg->sender = malloc(sizeof(char) * (strlen(temp) + 1));
-                strcpy(bstMsg->sender, temp);
-            } else if (wordCount % numOfMsgMembers == 3) {
-                bstMsg->receiver = malloc(sizeof(char) * (strlen(temp) + 1));
-                strcpy(bstMsg->receiver, temp);
-            } else if (wordCount % numOfMsgMembers == 4) {
-                bstMsg->content = malloc(sizeof(char) * (strlen(temp) + 1));
-                strcpy(bstMsg->content, temp);
-            }
-            wordCount++;
-
-            if (ch == '\n') {
-                // End of message, process the current message
-                if (bstMsg != NULL) {
-                    // Insert the message into the BST
-                    bst_add(tree, bstMsg);
-                }
-                bstMsg =
-                    create_empty_msg();  // reset msg element to intake next message. Note: remember to free last msg
-                                         // after end of loop - this will be end of loop since file ends with newline.
-            }
-
-            i = 0;           // reset the index for temp once word is stored
-            temp[i] = '\0';  // reset the temp word char array to gather new word
-            continue;
-        }
-        temp[i] = ch;
-        i++;
-    }
-
-    /*
-    if (wordCount == 0) {
-        free(bstmsg);
-        fclose(file);
-        fprintf(stderr, "ERROR: Empty file\n");
-        return -1;
-    }
-    */
-    free(bstMsg);  // need to free the last msg that's created by the last newline in the file
-    fclose(rFile);
-
-    return 0;  // need to free after use
+    free(expected_filename);
+    return msg;
 }

@@ -1,3 +1,11 @@
+ /**
+ * @file main.c / source code for Practicum I.
+ * @authors Estelita Chen & Lori Kim / CS5600 / Northeastern University
+ * @brief
+ * @date Nov 11, 2025 / Fall 2025
+ *
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

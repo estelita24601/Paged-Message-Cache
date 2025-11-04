@@ -1,12 +1,10 @@
-/*
-* bst.h / header file for BST.
-*
-* Lori Kim / CS5600 / Northeastern University
-*
-* Fall 2025 / Sep 28, 2025
-*
-*/
-
+ /**
+ * @file bst.h / header file for BST.
+ * @authors Estelita Chen & Lori Kim / CS5600 / Northeastern University
+ * @brief
+ * @date Nov 11, 2025 / Fall 2025
+ *
+ */
 
 #ifndef BST_H
 #define BST_H

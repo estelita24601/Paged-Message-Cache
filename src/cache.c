@@ -1,8 +1,8 @@
-/**
- * @file cache.c
- * @authors Estelita Chen & Lori Kim
+ /**
+ * @file cache.c / source code for Cache.
+ * @authors Estelita Chen & Lori Kim / CS5600 / Northeastern University
  * @brief
- * @date 2025-10-31
+ * @date Nov 11, 2025 / Fall 2025
  *
  */
 

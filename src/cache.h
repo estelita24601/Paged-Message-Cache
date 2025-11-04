@@ -1,10 +1,11 @@
-/**
- * @file cache.h
- * @authors Estelita Chen & Lori Kim
+ /**
+ * @file cache.h / header file for Cache.
+ * @authors Estelita Chen & Lori Kim / CS5600 / Northeastern University
  * @brief
- * @date 2025-10-31
+ * @date Nov 11, 2025 / Fall 2025
  *
  */
+
 #ifndef CACHE_H
 #define CACHE_H
 
