@@ -16,7 +16,7 @@
 
 int main(int argc, char* argv[]) {
     // test printing only
-    printf("cache size = %d messages\nmessage size = %d bytes\n", CACHE_SIZE, MESSAGE_SIZE);
+    printf("cache size = %d messages\nmessage size = %d bytes\n", CACHE_SIZE, MAX_MESSAGE_SIZE);
 
     // initialize empty cache
     // initialize empty AVL tree
