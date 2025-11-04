@@ -18,9 +18,6 @@
 
 static int NEXT_ID;
 
-// forward declaration of bst_t
-typedef struct bst_t bst_t;
-
 /**
  * @brief Represents a message.
  */

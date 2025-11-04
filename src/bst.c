@@ -6,13 +6,13 @@
  *
  */
 
-#include "bst.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "messages.h"
+#include "bst.h"
 
 /**
  * @brief Creates a new BSTNode with the given message.

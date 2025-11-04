@@ -121,7 +121,7 @@ message_t* create_msg(char* sender, char* receiver, char* content) {
  *
  * @param message the message struct to free
  */
-void free_msg(message_t* msg) {
+void free_message(message_t* msg) {
     if (msg == NULL) {
         return;
     }
