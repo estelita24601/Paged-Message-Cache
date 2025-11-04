@@ -326,10 +326,11 @@ char* create_msg_filename(int msg_id) {
  */
 bool store_msg(message_t* msg) {
     if (msg == NULL) {
+        printf("ERROR: tried to store a NULL message\n");
         return false;
     }
-    char* expected_filename = create_msg_filename(msg->id);
 
+    char* expected_filename = create_msg_filename(msg->id);
     FILE* file = fopen(expected_filename, "w");
 
     if (file == NULL) {
