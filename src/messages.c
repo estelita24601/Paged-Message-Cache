@@ -341,7 +341,7 @@ char* message_to_pretty_str(message_t* message) {
 
 
 /**
- * @brief
+ * @brief Compares two message structs based on message id.
  *
  * @param msg1 the first message to compare
  * @param msg2 the second message to compare
