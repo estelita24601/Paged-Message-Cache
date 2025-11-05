@@ -9,45 +9,52 @@
 #ifndef CACHE_H
 #define CACHE_H
 #include "bst.h"
+#include "config.h"
 #include "message.h"
 
+// todo: turn this into a union
 typedef struct cache_page {
-    bool occupied;  // is this page of the cache occupied?
+    // meta-data
+    bool occupied;  // flag for if this page is occupied
 
-    int id;           // id of the message
-    time_t sentTime;  // time the message was sent
-    bool sentFlag;    // flag indicating if the message has been delivered
-    char[] sender;    // sender of the message
-    char[] receiver;  // receiver of the message
-    char[] content;   // content of the message
-
+    // actual data for the message stored in this page
+    int id;                            // id of the message
+    time_t sentTime;                   // time the message was sent
+    bool sentFlag;                     // flag indicating if the message has been delivered
+    char sender[MAX_SENDER_SIZE];      // sender of the message
+    char receiver[MAX_RECEIVER_SIZE];  // receiver of the message
+    char content[MAX_CONTENT_SIZE];    // content of the message
 } cache_page_t;
 
 typedef struct cache {
     // cache meta-data
     int num_pages;
     int page_size_bytes;
-    bst_t* avl_lookup;  // use binary search to search by message id #
-    // todo: add a stack for LIFO
 
-    // actual messages we're saving in the cache
-    cache_page_t* pages;
+    cache_page_t* page_array;
+    int last_added;  // index for last page added to cache
+
 } cache_t;
+
+/**
+ * @brief - given the max message size in bytes calculate how much memory to allocate for the different fields such as
+ * sender, receiver, content, etc.
+ *
+ */
+void calculate_memory_sizes();
 
 /**
  * @brief Create a cache object
  *
- * @param num_pages
- * @param page_size
- * @return msg_cache_t*
+ * @return cache_t*
  */
-msg_cache_t* create_cache(int num_pages, int page_size);
+cache_t* create_cache();
 
 /**
- * @brief
+ * @brief free the cache object
  *
  * @param cache
  */
-void free_cache(msg_cache_t* cache);
+void free_cache(cache_t* cache);
 
 #endif
