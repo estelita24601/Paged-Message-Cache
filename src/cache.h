@@ -8,8 +8,7 @@
 
 #ifndef CACHE_H
 #define CACHE_H
-#include "bst.h"
-#include "config.h"
+
 #include "message.h"
 
 // todo: turn this into a union
