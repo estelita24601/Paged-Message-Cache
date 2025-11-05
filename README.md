@@ -1,4 +1,4 @@
-todo:
+# todo
 
 - maybe rewrite `message_to_str` so its a helper message for `store_msg` instead?
 - make message_t being on stack vs. heap more consistent
@@ -23,3 +23,10 @@ todo:
 - config file stuff
   - do we want all stuff in one config file in the top and then `main.c` and `message.c` all read from the same config file?
   - or config file only for stuff `main.c` needs and then a separate one for the stuff that `message.c` needs and so forth?
+
+# references
+
+- <https://www.programiz.com/c-programming/c-unions>
+- <https://www.geeksforgeeks.org/c/c-unions/>
+- <https://thelinuxcode.com/unions-in-c/>
+- <https://coderivers.org/c/c-basic/c-union/>
