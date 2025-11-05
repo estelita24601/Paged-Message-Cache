@@ -43,7 +43,7 @@ int main() {
     char* r = "Mary Jane";
     char* c = "Hi, is the budget report ready?";
     message_t* msg = create_msg(s, r, c);
-    char* prettyMsg = message_to_pretty_str(msg1);
+    char* prettyMsg = message_to_pretty_str(msg);
 
     store_msg(msg);
     free_message(msg);
