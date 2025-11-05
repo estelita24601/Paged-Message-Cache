@@ -8,7 +8,7 @@
 
 #ifndef CACHE_H
 #define CACHE_H
-#include "bst.h"
+
 #include "message.h"
 
 typedef struct cache_page {
