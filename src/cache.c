@@ -24,7 +24,11 @@ cache_t* create_cache() {
         exit(1);
     }
 
-    cache->page_array = ;
+    cache->page_array = init_page();
+    cache->page_size_bytes = MAX_MESSAGE_SIZE;
+    cache->total_pages = CACHE_SIZE;
+    cache->pages_occupied = 0;
+    cache->last_added = -1;
 
     return cache;
 
