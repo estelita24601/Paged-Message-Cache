@@ -16,7 +16,23 @@
  *
  * @return cache_t*
  */
-cache_t* create_cache(message_t* msg) {}
+cache_t* create_cache() {
+
+    cache_t* cache = (cache_t*)calloc(CACHE_SIZE, sizeof(cache_t*));
+    if (cache == NULL) {
+        fprintf(stderr, "ERROR: dynamic memory was not able to be allocated");
+        exit(1);
+    }
+
+    cache->page_array = init_page();
+    cache->page_size_bytes = MAX_MESSAGE_SIZE;
+    cache->total_pages = CACHE_SIZE;
+    cache->pages_occupied = 0;
+    cache->last_added = -1;
+
+    return cache;
+
+}
 
 bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy) {}
 
