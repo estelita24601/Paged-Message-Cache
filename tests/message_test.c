@@ -1,4 +1,4 @@
- /**
+/**
  * @file message_test.c / source code for message object tests.
  * @authors Estelita Chen & Lori Kim / CS5600 / Northeastern University
  * @brief
@@ -6,33 +6,15 @@
  *
  */
 
+#include "../src/message.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
-#include "../src/message.h"
 #include "../src/cache.h"
-
-/**
- * @brief prints if a test was a success or failure
- *
- * @param result bool - result of the test
- * @param message char * - describes the test that was run
- */
-void print_test_results(bool result, char *message)
-{
-    if (result)
-    {
-        printf("SUCCESS: %s\n\n", message);
-    }
-    else
-    {
-        printf("FAILURE: %s\n\n", message);
-    }
-}
-
+#include "helpers.h"
 
 /**
  * @brief Main function for tests of multiprocess cipher programs to encrypt words.
@@ -41,7 +23,8 @@ void print_test_results(bool result, char *message)
  * @return int - value for if successful or not
  */
 int main() {
-    // TEST: test store message and next_id - commented out since don't want to always create a new message with the same values but incremented id
+    // TEST: test store message and next_id - commented out since don't want to always create a new message with the
+    // same values but incremented id
     /*
     char* s = "John Vargas";
     char* r = "Mary Jane";
@@ -74,6 +57,5 @@ int main() {
     free_message(msg1);
     free(pretty_msg1);
 
-    
     return 0;
 }
