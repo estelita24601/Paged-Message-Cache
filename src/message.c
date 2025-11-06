@@ -6,8 +6,9 @@
  *
  */
 
-
 #define _XOPEN_SOURCE 700
+
+#include "message.h"
 
 #include <math.h>
 #include <stdbool.h>
@@ -15,8 +16,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
-#include "message.h"
 
 static int NEXT_ID;
 
@@ -29,7 +28,6 @@ static int NEXT_ID;
  * @return int The next available message ID
  */
 int get_next_id() {
-
     // get ID from the file
     FILE* id_file = fopen(NEXT_ID_PATH, "r");
     if (id_file) {
@@ -58,7 +56,8 @@ int get_next_id() {
  * @return char* - filename for this message ON THE HEAP
  */
 char* create_msg_filename(int msg_id) {
-    char* filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(msg_id) + 2)); // TODO: finalize a cap size for the id number
+    char* filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(msg_id) +
+                                            2));  // TODO: finalize a cap size for the id number
     sprintf(filename, MESSAGE_FILENAME_FORMAT, msg_id);
     return filename;
 }
@@ -74,7 +73,8 @@ char* create_msg_filename(int msg_id) {
  * @param sentFlag Whether the message has been delivered
  * @return message_t* A newly allocated message object, or NULL if sender/receiver are invalid
  */
-message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* content, time_t time_sent, bool sentFlag) {
+message_t* create_msg_from_parts(int id, const char* sender, const char* receiver, const char* content,
+                                 const time_t time_sent, bool sentFlag) {
     // first do null checks
     if (sender == NULL || receiver == NULL) {
         return NULL;
@@ -108,7 +108,7 @@ message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* con
  * @param content char* - content of the message
  * @return message_t* - pointer to the constructed message element
  */
-message_t* create_msg(char* sender, char* receiver, char* content) {
+message_t* create_msg(const char* sender, const char* receiver, const char* content) {
     time_t now;
     time(&now);
     int id = get_next_id();
@@ -311,7 +311,6 @@ char* msg_to_csv(message_t* msg) {
 
     return csv_str;
 }
-
 
 /**
  * @brief store a message element to a message store on disk.

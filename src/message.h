@@ -16,7 +16,6 @@
 
 #include "config.h"
 
-
 /**
  * @brief Represents a message.
  */
@@ -58,7 +57,8 @@ char* create_msg_filename(int msg_id);
  * @param sentFlag Whether the message has been delivered
  * @return message_t* A newly allocated message object, or NULL if sender/receiver are invalid
  */
-message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* content, time_t time_sent, bool sentFlag);
+message_t* create_msg_from_parts(int id, const char* sender, const char* receiver, const char* content,
+                                 time_t time_sent, bool sentFlag);
 
 /**
  * @brief Construct a message element with all values input.
@@ -68,7 +68,7 @@ message_t* create_msg_from_parts(int id, char* sender, char* receiver, char* con
  * @param content char* - content of the message
  * @return message_t* - pointer to the constructed message element
  */
-message_t* create_msg(char* sender, char* receiver, char* content);
+message_t* create_msg(const char* sender, const char* receiver, const char* content);
 
 /**
  * @brief Frees the memory allocated for a message struct
