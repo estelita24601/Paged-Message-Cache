@@ -49,6 +49,20 @@ int main() {
     actual = fill_page(NULL, msg1);
     PRINT_TEST_RESULTS(actual == false, "expected the function to catch if page is NULL");
 
+    PRINT_HEADER("create message from page");
+    fill_page(page1, msg1);
+    message_t* actual_msg = create_msg_from_page(page1);
+    PRINT_COMPARE_MESSAGES(msg1, actual_msg);
+
+    PRINT_HEADER("edge case of try to create message from empty page");
+    clear_page(page1);
+    actual_msg = create_msg_from_page(page1);
+    PRINT_TEST_RESULTS(actual_msg == NULL, "expected NULL return if page is empty");
+
+    PRINT_HEADER("edge case of trying to create message from a NULL page");
+    actual_msg = create_msg_from_page(NULL);
+    PRINT_TEST_RESULTS(actual_msg == NULL, "expected NULL return if page is NULL");
+
     free_message(msg1);
     free_message(msg2);
     free(page1);
