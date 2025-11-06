@@ -1,18 +1,18 @@
 CC = gcc
 CFLAGS = -Wall
-SRC_FILES = src/message.c src/cache.c
+SRC_FILES = src/message.c src/cache.c tests/helpers.c
 MSG_TEST_FILES =  $(SRC_FILES) tests/message_test.c
 CACHE_TEST_FILES =  $(SRC_FILES) tests/cache_test.c
-
+PAGE_TEST_FILES = ${SRC_FILES} tests/page_test.c
 
 .PHONY: all main test_msg test_cache test clean
 .DEFAULT_TARGET := all
 
-all: main
-
-main: $(SRC_FILES)
-	${CC} ${CFLAGS} $^ -o main
-	./message
+#all: main
+#
+#main: $(SRC_FILES)
+#	${CC} ${CFLAGS} $^ -o main
+#	./message
 
 # all: messages.c
 # 	${CC} ${CFLAGS} $^ -o message
@@ -25,6 +25,9 @@ test_msg: $(MSG_TEST_FILES)
 test_cache: $(CACHE_TEST_FILES)
 	${CC} ${CFLAGS} $^ -o cache_test -lm
 	./cache_test
+
+test_page: $(PAGE_TEST_FILES)
+	$(CC) $(CFLAGS) $^ -o page_test -lm
 
 test:  $(SRC_FILES) tests/tests.c
 	${CC} ${CFLAGS} $^ -o test -lm
