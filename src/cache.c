@@ -17,8 +17,7 @@
  * @return cache_t*
  */
 cache_t* create_cache() {
-
-    cache_t* cache = (cache_t*)calloc(CACHE_SIZE, sizeof(cache_t*));
+    cache_t* cache = (cache_t*) calloc(CACHE_SIZE, sizeof(cache_t*));
     if (cache == NULL) {
         fprintf(stderr, "ERROR: dynamic memory was not able to be allocated");
         exit(1);
@@ -31,7 +30,6 @@ cache_t* create_cache() {
     cache->last_added = -1;
 
     return cache;
-
 }
 
 bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy) {}
@@ -42,6 +40,10 @@ void free_cache(cache_t* cache) {}
 
 cache_page_t* init_page() {
     cache_page_t* new_page = malloc(sizeof(cache_page_t));
+    if (new_page == NULL) {
+        fprintf(stderr, "ERROR: memory was not able to be allocated\n");
+        exit(1);
+    }
     new_page->occupied = false;
 
     return new_page;
@@ -61,19 +63,44 @@ bool fill_page(cache_page_t* page, const message_t* msg) {
         return false;
     }
 
-    // todo: if time check strlen of sender, receiver and content isn't too big
+    // update page status
+    page->occupied = true;
 
+    // copy message values over
     page->id = msg->id;
     page->sent_time = msg->sentTime;
     page->sent_flag = msg->sentFlag;
-    strncpy(page->sender, msg->sender, MAX_SENDER_SIZE);
-    strncpy(page->receiver, msg->receiver, MAX_RECEIVER_SIZE);
-    strncpy(page->content, msg->content, MAX_CONTENT_SIZE);
+
+    // copy strings over
+    strncpy(page->sender, msg->sender, MAX_SENDER_SIZE - 1);
+    strncpy(page->receiver, msg->receiver, MAX_RECEIVER_SIZE - 1);
+    strncpy(page->content, msg->content, MAX_CONTENT_SIZE - 1);
+
+    // make sure strings are null terminated in case msg strings were truncated
+    page->sender[MAX_SENDER_SIZE - 1] = '\0';
+    page->receiver[MAX_RECEIVER_SIZE - 1] = '\0';
+    page->content[MAX_CONTENT_SIZE - 1] = '\0';
 
     return true;  // placeholder
 }
 
-bool clear_page(cache_page_t* page) {}
+bool clear_page(cache_page_t* page) {
+    if (page == NULL) {
+        printf("ERROR: trying to clear page that doesn't exist\n");
+        return false;
+    }
+    // update page status
+    page->occupied = false;
+
+    // reset values and empty strings
+    page->id = -1;
+    page->sent_time = -1;
+    page->sent_flag = false;
+    page->sender[0] = '\0';
+    page->receiver[0] = '\0';
+    page->content[0] = '\0';
+    return true;
+}
 
 message_t* create_msg_from_page(const cache_page_t* page) {}
 
