@@ -9,3 +9,13 @@
 #include "cache.h"
 
 // todo: implement functions from cache.h
+
+/**
+ * @brief Create a cache object on the heap
+ *
+ * @return cache_t*
+ */
+cache_t* create_cache(message_t* msg) {
+
+
+}

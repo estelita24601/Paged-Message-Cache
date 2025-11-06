@@ -11,7 +11,8 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "../src/messages.h"
+#include "../src/message.h"
+#include "../src/cache.h"
 
 /**
  * @brief prints if a test was a success or failure
@@ -71,6 +72,8 @@ int main() {
 
     free_message(msg1);
     free(pretty_msg1);
+
+    // TEST: 
 
 
     return 0;

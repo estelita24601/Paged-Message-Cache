@@ -12,7 +12,7 @@
 
 #include "cache.h"
 #include "config.h"
-#include "messages.h"
+#include "message.h"
 
 int main(int argc, char* argv[]) {
     // test printing only

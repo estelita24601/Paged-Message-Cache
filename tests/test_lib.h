@@ -1,4 +1,4 @@
-#include "../src/messages.h"
+#include "../src/message.h"
 
 /**
  * @brief Prints a test failure message and increments the failure counter

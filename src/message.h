@@ -16,7 +16,6 @@
 
 #include "config.h"
 
-static int NEXT_ID;
 
 /**
  * @brief Represents a message.

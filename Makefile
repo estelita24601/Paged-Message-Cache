@@ -1,10 +1,10 @@
 CC = gcc
 CFLAGS = -Wall
-SRC_FILES = src/messages.c
-TEST_FILES =  $(SRC_FILES) tests/tests.c
+SRC_FILES = src/message.c src/cache.c
+TEST_FILES =  $(SRC_FILES) tests/message_test.c
 
 
-.PHONY: all main test clean
+.PHONY: all main test_msg test clean
 .DEFAULT_TARGET := all
 
 all: main
@@ -17,11 +17,11 @@ main: $(SRC_FILES)
 # 	${CC} ${CFLAGS} $^ -o message
 # 	./message
 
-# test: messages.c bst.c tests.c
-# 	${CC} ${CFLAGS} $^ -o tests
-# 	./tests
+test_msg: $(TEST_FILES)
+	${CC} ${CFLAGS} $^ -o msg_test -lm
+	./msg_test
 
-test:  $(TEST_FILES)
+test:  $(SRC_FILES) tests/tests.c
 	${CC} ${CFLAGS} $^ -o test -lm
 	./test
 

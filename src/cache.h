@@ -21,8 +21,8 @@ typedef struct cache_page {
 
     // actual data for the message stored in this page
     int id;                            // id of the message
-    time_t sentTime;                   // time the message was sent
-    bool sentFlag;                     // flag indicating if the message has been delivered
+    time_t sent_time;                   // time the message was sent
+    bool sent_flag;                     // flag indicating if the message has been delivered
     char sender[MAX_SENDER_SIZE];      // sender of the message
     char receiver[MAX_RECEIVER_SIZE];  // receiver of the message
     char content[MAX_CONTENT_SIZE];    // content of the message
@@ -45,7 +45,7 @@ typedef struct cache {
  *
  * @return cache_t*
  */
-cache_t* create_cache();
+cache_t* create_cache(message_t* msg);
 
 /**
  * @brief - add a message to the cache. if the cache is full then use the replacement strategy specified

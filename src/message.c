@@ -16,7 +16,9 @@
 #include <string.h>
 #include <time.h>
 
-#include "messages.h"
+#include "message.h"
+
+static int NEXT_ID;
 
 /**
  * @brief Gets the next available message ID and updates the counter
