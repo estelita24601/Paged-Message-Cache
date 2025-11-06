@@ -29,7 +29,7 @@ typedef struct cache_page {
 } cache_page_t;
 
 typedef struct cache {
-    cache_page_t** page_array;  // array of cache pages
+    cache_page_t* page_array[CACHE_SIZE];  // array of cache pages
 
     // cache meta-data
     int page_size_bytes;  // max size of a page that stores a message

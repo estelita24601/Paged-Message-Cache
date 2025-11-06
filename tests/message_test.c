@@ -1,14 +1,10 @@
  /**
- * @file message_test.c / source code for Message object tests.
+ * @file message_test.c / source code for message object tests.
  * @authors Estelita Chen & Lori Kim / CS5600 / Northeastern University
  * @brief
  * @date Nov 11, 2025 / Fall 2025
  *
  */
-
-
-#include <stdio.h>
-#include <stdlib.h>
 
 
 #include <stdio.h>

@@ -73,8 +73,10 @@ int main() {
     free_message(msg1);
     free(pretty_msg1);
 
-    // TEST: 
-
+    // TEST: create_cache();
+    cache_t* cache = create_cache();
+    printf("Cache Total Pages: %d\n", cache->total_pages);
+    free_cache(cache);
 
     return 0;
 }

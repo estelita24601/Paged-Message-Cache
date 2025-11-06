@@ -24,7 +24,9 @@ cache_t* create_cache() {
         exit(1);
     }
 
-    cache->page_array = init_page();
+    for (int i = 0; i < CACHE_SIZE; i++) {
+        cache->page_array[i] = init_page();
+    }
     cache->page_size_bytes = MAX_MESSAGE_SIZE;
     cache->total_pages = CACHE_SIZE;
     cache->pages_occupied = 0;
@@ -38,7 +40,19 @@ bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy) {}
 
 message_t* cache_find(cache_t* cache, int id) {}
 
-void free_cache(cache_t* cache) {}
+void free_cache(cache_t* cache) {
+    if (cache == NULL) {
+        fprintf(stderr, "ERROR: cache is NULL");
+        exit(1);
+    }
+
+    for(int i = 0; i < cache->total_pages; i++) {
+        free(cache->page_array [i]);
+    }
+    
+    free(cache);
+
+}
 
 cache_page_t* init_page() {
     cache_page_t* new_page = malloc(sizeof(cache_page_t));
