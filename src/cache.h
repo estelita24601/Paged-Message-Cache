@@ -21,8 +21,8 @@ typedef struct cache_page {
 
     // actual data for the message stored in this page
     int id;                            // id of the message
-    time_t sent_time;                   // time the message was sent
-    bool sent_flag;                     // flag indicating if the message has been delivered
+    time_t sent_time;                  // time the message was sent
+    bool sent_flag;                    // flag indicating if the message has been delivered
     char sender[MAX_SENDER_SIZE];      // sender of the message
     char receiver[MAX_RECEIVER_SIZE];  // receiver of the message
     char content[MAX_CONTENT_SIZE];    // content of the message

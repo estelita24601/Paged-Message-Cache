@@ -17,7 +17,7 @@
  * @return cache_t*
  */
 cache_t* create_cache() {
-    cache_t* cache = (cache_t*) calloc(CACHE_SIZE, sizeof(cache_t*));
+    cache_t* cache = (cache_t*) calloc(1, sizeof(cache_t));
     if (cache == NULL) {
         fprintf(stderr, "ERROR: dynamic memory was not able to be allocated");
         exit(1);
@@ -34,9 +34,13 @@ cache_t* create_cache() {
     return cache;
 }
 
-bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy) {}
+bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy) {
+    return false;  // placeholder
+}
 
-message_t* cache_find(cache_t* cache, int id) {}
+message_t* cache_find(cache_t* cache, int id) {
+    return NULL;  // placeholder
+}
 
 void free_cache(cache_t* cache) {
     if (cache == NULL) {
@@ -44,12 +48,11 @@ void free_cache(cache_t* cache) {
         exit(1);
     }
 
-    for(int i = 0; i < cache->total_pages; i++) {
-        free(cache->page_array [i]);
+    for (int i = 0; i < cache->total_pages; i++) {
+        free(cache->page_array[i]);
     }
-    
-    free(cache);
 
+    free(cache);
 }
 
 cache_page_t* init_page() {
@@ -59,6 +62,7 @@ cache_page_t* init_page() {
         exit(1);
     }
     new_page->occupied = false;
+    new_page->id = -1;
 
     return new_page;
 }
@@ -70,10 +74,17 @@ bool fill_page(cache_page_t* page, const message_t* msg) {
         return false;
     } else if (msg == NULL) {
         printf("ERROR: trying to fill page with a NULL message object\n");
+        return false;
     }
     // make sure strings inside of message aren't null
     if (msg->sender == NULL || msg->receiver == NULL || msg->content == NULL) {
-        printf("ERROR: trying to fill page with a message object that contains NULL string fields");
+        printf("ERROR: trying to fill page with a message object that contains NULL string fields\n");
+        return false;
+    }
+
+    // make sure page isn't already filled
+    if (page->occupied) {
+        printf("ERROR: trying to fill a page that is occupied!\n");
         return false;
     }
 
@@ -116,7 +127,14 @@ bool clear_page(cache_page_t* page) {
     return true;
 }
 
-message_t* create_msg_from_page(const cache_page_t* page) {}
+message_t* create_msg_from_page(const cache_page_t* page) {
+    if (page == NULL) {
+        printf("ERROR: trying to create message from a page that doesn't exist\n");
+        return NULL;
+    }
+
+    return NULL;  // placeholder
+}
 
 void print_page(cache_page_t* page) {
     if (page == NULL) {
