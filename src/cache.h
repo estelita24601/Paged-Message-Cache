@@ -75,6 +75,18 @@ message_t* cache_find(cache_t* cache, int id);
 void free_cache(cache_t* cache);
 
 /**
+ *
+ * @param cache
+ */
+void print_cache_metadata(cache_t* cache);
+
+/**
+ *
+ * @param cache
+ */
+void print_cache_contents(cache_t* cache);
+
+/**
  * @brief - initialize empty cache page on the heap
  *
  * @return cache_page_t*
@@ -111,6 +123,12 @@ message_t* create_msg_from_page(const cache_page_t* page);
  * @return
  */
 void print_page(cache_page_t* page);
+
+/**
+ *
+ * @param page
+ */
+void print_page_metadata(cache_page_t* page);
 
 /**
  * @brief

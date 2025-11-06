@@ -55,6 +55,29 @@ void free_cache(cache_t* cache) {
     free(cache);
 }
 
+void print_cache_metadata(cache_t* cache) {
+    printf("{Total Pages = %d,\n", cache->total_pages);
+    printf("Pages Occupied = %d/%d,\n", cache->pages_occupied, cache->total_pages);
+    printf("Page Size = %d bytes,\n", cache->page_size_bytes);
+    printf("Index of Last Added Page = %d}\n", cache->last_added);
+}
+
+void print_cache_contents(cache_t* cache) {
+    printf("{Pages Occupied = %d,\n", cache->pages_occupied);
+    printf("Page Contents = [");
+
+    for (int i = 0; i < cache->total_pages; i++) {
+        cache_page_t* curr = cache->page_array[i];
+        print_page_metadata(curr);
+
+        if (i != cache->total_pages - 1) {
+            printf(", ");
+        } else {
+            printf("]\n}\n");
+        }
+    }
+}
+
 cache_page_t* init_page() {
     cache_page_t* new_page = malloc(sizeof(cache_page_t));
     if (new_page == NULL) {
@@ -70,21 +93,21 @@ cache_page_t* init_page() {
 bool fill_page(cache_page_t* page, const message_t* msg) {
     // make sure objects aren't null
     if (page == NULL) {
-        printf("ERROR: trying to fill page that doesn't exist\n");
+        printf("WARNING: trying to fill page that doesn't exist\n");
         return false;
     } else if (msg == NULL) {
-        printf("ERROR: trying to fill page with a NULL message object\n");
+        printf("WARNING: trying to fill page with a NULL message object\n");
         return false;
     }
     // make sure strings inside of message aren't null
     if (msg->sender == NULL || msg->receiver == NULL || msg->content == NULL) {
-        printf("ERROR: trying to fill page with a message object that contains NULL string fields\n");
+        printf("WARNING: trying to fill page with a message object that contains NULL string fields\n");
         return false;
     }
 
     // make sure page isn't already filled
     if (page->occupied) {
-        printf("ERROR: trying to fill a page that is occupied!\n");
+        printf("WARNING: trying to fill a page that is occupied!\n");
         return false;
     }
 
@@ -111,7 +134,7 @@ bool fill_page(cache_page_t* page, const message_t* msg) {
 
 bool clear_page(cache_page_t* page) {
     if (page == NULL) {
-        printf("ERROR: trying to clear page that doesn't exist\n");
+        printf("WARNING: trying to clear page that doesn't exist\n");
         return false;
     }
     // update page status
@@ -129,7 +152,7 @@ bool clear_page(cache_page_t* page) {
 
 message_t* create_msg_from_page(const cache_page_t* page) {
     if (page == NULL) {
-        printf("ERROR: trying to create message from a page that doesn't exist\n");
+        printf("WARNING: trying to create message from a page that doesn't exist\n");
         return NULL;
     } else if (page->occupied == false) {
         printf("WARNING: tried to create a message from a page that is unoccupied\n");
@@ -144,7 +167,7 @@ message_t* create_msg_from_page(const cache_page_t* page) {
 
 void print_page(cache_page_t* page) {
     if (page == NULL) {
-        printf("ERROR: trying to print page that doesn't exist\n");
+        printf("WARNING: trying to print page that doesn't exist\n");
         return;
     }
 
@@ -154,12 +177,24 @@ void print_page(cache_page_t* page) {
     } else {
         boolStr = "false";
     }
-    printf("page occupied = %s\n", boolStr);
-    printf("page id = %d\n", page->id);
-    printf("page sender = '%s'\n", page->sender);
-    printf("page receiver = '%s'\n", page->receiver);
-    printf("page content = '%s'\n", page->content);
+    printf("{page occupied = %s,\n", boolStr);
+    printf("page id = %d,\n", page->id);
+    printf("page sender = '%s',\n", page->sender);
+    printf("page receiver = '%s',\n", page->receiver);
+    printf("page content = '%s'}\n", page->content);
     // todo: maybe add printing for sent time and sent flag
+}
+
+void print_page_metadata(cache_page_t* page) {
+    if (page == NULL) {
+        printf("WARNING: trying to print page that doesn't exist\n");
+        return;
+    }
+    if (page->occupied) {
+        printf("{occupied: TRUE, message_id: %d}", page->id);
+    } else {
+        printf("{occupied: FALSE}");
+    }
 }
 
 void free_page(cache_page_t* page) {
