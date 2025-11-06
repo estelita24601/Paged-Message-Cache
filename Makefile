@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall
 SRC_FILES = src/message.c src/cache.c
-TEST_FILES =  $(SRC_FILES) tests/message_test.c
+MSG_TEST_FILES =  $(SRC_FILES) tests/message_test.c
 
 
 .PHONY: all main test_msg test clean
@@ -17,7 +17,7 @@ main: $(SRC_FILES)
 # 	${CC} ${CFLAGS} $^ -o message
 # 	./message
 
-test_msg: $(TEST_FILES)
+test_msg: $(MSG_TEST_FILES)
 	${CC} ${CFLAGS} $^ -o msg_test -lm
 	./msg_test
 

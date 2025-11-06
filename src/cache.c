@@ -15,7 +15,8 @@
  *
  * @return cache_t*
  */
-cache_t* create_cache(message_t* msg) {
+cache_t* create_cache() {
 
+    return NULL;
 
 }
