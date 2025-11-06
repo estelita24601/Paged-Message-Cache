@@ -59,16 +59,6 @@ cache_t* create_cache(message_t* msg);
 bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy);
 
 /**
- * @brief - helper function for when cache_add needs to replace a page
- *
- * @param cache cache_t* -
- * @param i int - index of the page to clear out
- * @return true
- * @return false
- */
-bool cache_clear_page_(cache_t* cache, int i);
-
-/**
  * @brief - use linear search to find a message in the cache
  *
  * @param cache cach_t* - cache we're searching
@@ -94,11 +84,19 @@ cache_page_t* init_page();
 /**
  * @brief put data for the message into the page
  *
+ * @param page
  * @param msg
  * @return true
  * @return false
  */
-bool fill_page(const message_t* msg);
+bool fill_page(cache_page_t* page, const message_t* msg);
+
+/**
+ *
+ * @param page
+ * @return
+ */
+bool clear_page(cache_page_t* page);
 
 /**
  * @brief Create a msg from page object
