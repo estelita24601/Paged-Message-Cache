@@ -23,10 +23,13 @@
  * @return int - value for if successful or not
  */
 int main() {
-    // TEST: create_cache();
+    PRINT_HEADER("create cache");
     cache_t* cache = create_cache();
-    printf("Cache Total Pages: %d\n", cache->total_pages);
-    free_cache(cache);  // FIXME: free() is aborting here
+    print_cache_metadata(cache);
+    print_cache_contents(cache);
+
+    PRINT_HEADER("free cache");
+    free_cache(cache);
 
     return 0;
 }

@@ -34,10 +34,12 @@ cache_t* create_cache() {
     return cache;
 }
 
+// todo
 bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy) {
     return false;  // placeholder
 }
 
+// todo
 message_t* cache_find(cache_t* cache, int id) {
     return NULL;  // placeholder
 }
@@ -56,24 +58,24 @@ void free_cache(cache_t* cache) {
 }
 
 void print_cache_metadata(cache_t* cache) {
-    printf("{Total Pages = %d,\n", cache->total_pages);
-    printf("Pages Occupied = %d/%d,\n", cache->pages_occupied, cache->total_pages);
-    printf("Page Size = %d bytes,\n", cache->page_size_bytes);
-    printf("Index of Last Added Page = %d}\n", cache->last_added);
+    printf("Total Pages = %d\n", cache->total_pages);
+    printf("Pages Occupied = %d/%d\n", cache->pages_occupied, cache->total_pages);
+    printf("Page Size = %d bytes\n", cache->page_size_bytes);
+    printf("Index of Last Added Page = %d\n", cache->last_added);
 }
 
 void print_cache_contents(cache_t* cache) {
-    printf("{Pages Occupied = %d,\n", cache->pages_occupied);
-    printf("Page Contents = [");
+    printf("Page Contents = [\n");
 
     for (int i = 0; i < cache->total_pages; i++) {
+        printf("\t");
         cache_page_t* curr = cache->page_array[i];
         print_page_metadata(curr);
 
         if (i != cache->total_pages - 1) {
-            printf(", ");
+            printf(",\n");
         } else {
-            printf("]\n}\n");
+            printf("\n]\n");
         }
     }
 }
@@ -177,11 +179,11 @@ void print_page(cache_page_t* page) {
     } else {
         boolStr = "false";
     }
-    printf("{page occupied = %s,\n", boolStr);
-    printf("page id = %d,\n", page->id);
-    printf("page sender = '%s',\n", page->sender);
-    printf("page receiver = '%s',\n", page->receiver);
-    printf("page content = '%s'}\n", page->content);
+    printf("page occupied = %s\n", boolStr);
+    printf("page id = %d\n", page->id);
+    printf("page sender = '%s'\n", page->sender);
+    printf("page receiver = '%s'\n", page->receiver);
+    printf("page content = '%s'\n", page->content);
     // todo: maybe add printing for sent time and sent flag
 }
 
@@ -191,9 +193,9 @@ void print_page_metadata(cache_page_t* page) {
         return;
     }
     if (page->occupied) {
-        printf("{occupied: TRUE, message_id: %d}", page->id);
+        printf("{msg_id: %d}", page->id);
     } else {
-        printf("{occupied: FALSE}");
+        printf("{msg_id: NaN}");
     }
 }
 

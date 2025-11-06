@@ -21,7 +21,7 @@ void PRINT_COMPARISON(const char* expected, const char* actual) {
 
 void PRINT_HEADER(char* str) {
     printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-    printf("TEST %s\n", str);
+    printf("TEST - %s\n", str);
     printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
 
