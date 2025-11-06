@@ -27,10 +27,9 @@
  * @return int The next available message ID
  */
 int get_next_id() {
-    FILE* id_file;
 
     // get ID from the file
-    id_file = fopen(NEXT_ID_PATH, "r");
+    FILE* id_file = fopen(NEXT_ID_PATH, "r");
     if (id_file) {
         fscanf(id_file, "%d", &NEXT_ID);
         fclose(id_file);

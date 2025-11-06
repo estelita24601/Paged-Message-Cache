@@ -20,4 +20,4 @@ csv format: id,sender,receiver,time_sent,delivered_flag,content
 21 <-- (10 digit max id number) + (1 character delivered_flag) + (5 commas) + (5 extra chars for padding/safety)
 */
 
-#define NEXT_ID_PATH "../data/_NEXT_ID.txt"  // file that tells us the next un-used id number
+#define NEXT_ID_PATH "data/_NEXT_ID.txt"  // file that tells us the next un-used id number
