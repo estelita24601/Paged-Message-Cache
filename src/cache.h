@@ -9,11 +9,14 @@
 #ifndef CACHE_H
 #define CACHE_H
 
+#include <stdbool.h>
+
+#include "config.h"
 #include "message.h"
 
-// todo: turn this into a union
+typedef enum { LIFO, RANDOM } replacement_strategy;
+
 typedef struct cache_page {
-    // meta-data
     bool occupied;  // flag for if this page is occupied
 
     // actual data for the message stored in this page
@@ -26,28 +29,53 @@ typedef struct cache_page {
 } cache_page_t;
 
 typedef struct cache {
+    cache_page_t** page_array;  // array of cache pages
+
     // cache meta-data
-    int num_pages;
-    int page_size_bytes;
-
-    cache_page_t* page_array;
-    int last_added;  // index for last page added to cache
-
+    int page_size_bytes;  // max size of a page that stores a message
+    int total_pages;      // max messages this cache can hold
+    int pages_occupied;   // how many messages currently in the cache
+    int last_added;       // index of last page added to cache
 } cache_t;
 
-/**
- * @brief - given the max message size in bytes calculate how much memory to allocate for the different fields such as
- * sender, receiver, content, etc.
- *
- */
-void calculate_memory_sizes();
+///////////////////////////////////////////////////////////////////////
 
 /**
- * @brief Create a cache object
+ * @brief Create a cache object on the heap
  *
  * @return cache_t*
  */
 cache_t* create_cache();
+
+/**
+ * @brief - add a message to the cache. if the cache is full then use the replacement strategy specified
+ *
+ * @param cache
+ * @param msg
+ * @param strategy
+ * @return true
+ * @return false
+ */
+bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy);
+
+/**
+ * @brief - helper function for when cache_add needs to replace a page
+ *
+ * @param cache cache_t* -
+ * @param i int - index of the page to clear out
+ * @return true
+ * @return false
+ */
+bool cache_clear_page_(cache_t* cache, int i);
+
+/**
+ * @brief - use linear search to find a message in the cache
+ *
+ * @param cache cach_t* - cache we're searching
+ * @param id int - id of the message we want to find
+ * @return message_t* - found message or NULL if not found
+ */
+message_t* cache_find(cache_t* cache, int id);
 
 /**
  * @brief free the cache object
@@ -55,5 +83,36 @@ cache_t* create_cache();
  * @param cache
  */
 void free_cache(cache_t* cache);
+
+/**
+ * @brief - initialize empty cache page on the heap
+ *
+ * @return cache_page_t*
+ */
+cache_page_t* init_page();
+
+/**
+ * @brief put data for the message into the page
+ *
+ * @param msg
+ * @return true
+ * @return false
+ */
+bool fill_page(const message_t* msg);
+
+/**
+ * @brief Create a msg from page object
+ *
+ * @param page
+ * @return message_t*
+ */
+message_t* create_msg_from_page(const cache_page_t* page);
+
+/**
+ * @brief
+ *
+ * @param page
+ */
+void free_page(cache_page_t* page);
 
 #endif
