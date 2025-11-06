@@ -50,6 +50,9 @@ bool fill_page(cache_page_t* page, const message_t* msg) {
     page->id = msg->id;
     page->sent_time = msg->sentTime;
     page->sent_flag = msg->sentFlag;
+    strncpy(page->sender, msg->sender, MAX_SENDER_SIZE);
+    strncpy(page->receiver, msg->receiver, MAX_RECEIVER_SIZE);
+    strncpy(page->content, msg->content, MAX_CONTENT_SIZE);
 
     return true;  // placeholder
 }
