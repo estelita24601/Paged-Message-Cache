@@ -107,6 +107,12 @@ bool clear_page(cache_page_t* page);
 message_t* create_msg_from_page(const cache_page_t* page);
 
 /**
+ * @param page
+ * @return
+ */
+void print_page(cache_page_t* page);
+
+/**
  * @brief
  *
  * @param page

@@ -6,7 +6,7 @@
  * @param result bool - result of the test
  * @param message char * - describes the test that was run
  */
-void print_test_results(bool result, char* message);
+void PRINT_TEST_RESULTS(bool result, char* message);
 
 /**
  * @brief Prints a comparison between expected and actual test results

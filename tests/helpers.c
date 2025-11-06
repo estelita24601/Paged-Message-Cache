@@ -6,11 +6,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-void print_test_results(bool result, char* message) {
+void PRINT_TEST_RESULTS(bool result, char* message) {
     if (result) {
-        printf("SUCCESS: %s\n\n", message);
+        printf("\nPASS: %s\n", message);
     } else {
-        printf("FAILURE: %s\n\n", message);
+        printf("\nFAIL: %s\n", message);
     }
 }
 
@@ -25,13 +25,12 @@ void PRINT_HEADER(char* str) {
 }
 
 void PRINT_COMPARE_MESSAGES(message_t* expected_msg, message_t* actual_msg) {
-    // todo: use msg_to_pretty_str
     char* exp_msg_print = message_to_pretty_str(expected_msg);
-    char* actual_msg_print = message_to_pretty_str(expected_msg);
+    char* actual_msg_print = message_to_pretty_str(actual_msg);
     printf("\texpected: %s\n", exp_msg_print);
     printf("\t  actual: %s\n", actual_msg_print);
     free(exp_msg_print);
     free(actual_msg_print);
 }
 
-void PRINT_SUBHEADER(char* str) { printf("\n-- %s\n", str); }
+void PRINT_SUBHEADER(char* str) { printf("\n---- %s\n", str); }

@@ -118,4 +118,29 @@ bool clear_page(cache_page_t* page) {
 
 message_t* create_msg_from_page(const cache_page_t* page) {}
 
-void free_page(cache_page_t* page) {}
+void print_page(cache_page_t* page) {
+    if (page == NULL) {
+        printf("ERROR: trying to print page that doesn't exist\n");
+        return;
+    }
+
+    char* boolStr;
+    if (page->occupied) {
+        boolStr = "true";
+    } else {
+        boolStr = "false";
+    }
+    printf("page occupied = %s\n", boolStr);
+    printf("page id = %d\n", page->id);
+    printf("page sender = '%s'\n", page->sender);
+    printf("page receiver = '%s'\n", page->receiver);
+    printf("page content = '%s'\n", page->content);
+    // todo: maybe add printing for sent time and sent flag
+}
+
+void free_page(cache_page_t* page) {
+    if (page == NULL) {
+        return;
+    }
+    free(page);
+}
