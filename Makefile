@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall
-SRC_FILES = src/messages.c src/bst.c
+SRC_FILES = src/messages.c
 TEST_FILES =  $(SRC_FILES) tests/tests.c
 
 
@@ -13,7 +13,7 @@ main: $(SRC_FILES)
 	${CC} ${CFLAGS} $^ -o main
 	./message
 
-# all: messages.c bst.c
+# all: messages.c
 # 	${CC} ${CFLAGS} $^ -o message
 # 	./message
 

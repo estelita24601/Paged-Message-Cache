@@ -38,13 +38,25 @@ void print_msg_found(message_t* msg) {
  * @return int - value for if successful or not
  */
 int main() {
-    // TEST: test create_msg_from_parts & create_msg_from_str
+    // TEST: test store message and next_id
+    char* s = "John Vargas";
+    char* r = "Mary Jane";
+    char* c = "Hi, is the budget report ready?";
+    message_t* msg = create_msg(s, r, c);
+    char* prettyMsg = message_to_pretty_str(msg);
+
+    store_msg(msg);
+    free_message(msg);
+    free(prettyMsg);
+
+    // TEST: test retrieve_msg & message_to_pretty_str
     message_t* msg1 = retrieve_msg(1);
     char* prettyMsg1 = message_to_pretty_str(msg1);
     printf("Msg1 Check: %s", prettyMsg1);
 
     free_message(msg1);
     free(prettyMsg1);
+
 
     return 0;
 }

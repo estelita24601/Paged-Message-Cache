@@ -57,7 +57,7 @@ int get_next_id() {
  * @return char* - filename for this message ON THE HEAP
  */
 char* create_msg_filename(int msg_id) {
-    char* filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(msg_id) + 2));
+    char* filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(msg_id) + 2)); // TODO: finalize a cap size for the id number
     sprintf(filename, MESSAGE_FILENAME_FORMAT, msg_id);
     return filename;
 }
