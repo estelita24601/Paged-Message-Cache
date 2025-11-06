@@ -131,9 +131,15 @@ message_t* create_msg_from_page(const cache_page_t* page) {
     if (page == NULL) {
         printf("ERROR: trying to create message from a page that doesn't exist\n");
         return NULL;
+    } else if (page->occupied == false) {
+        printf("WARNING: tried to create a message from a page that is unoccupied\n");
+        return NULL;
     }
 
-    return NULL;  // placeholder
+    message_t* msg =
+        create_msg_from_parts(page->id, page->sender, page->receiver, page->content, page->sent_time, page->sent_flag);
+
+    return msg;
 }
 
 void print_page(cache_page_t* page) {
