@@ -1,5 +1,10 @@
-#define CACHE_SIZE 16          // how many messages in the cache
+#ifndef CACHE_SIZE
+#define CACHE_SIZE 16  // how many messages in the cache
+#endif
+
+#ifndef MAX_MESSAGE_SIZE
 #define MAX_MESSAGE_SIZE 1024  // how many bytes for each message in the cache
+#endif
 
 // calculate space for one page of the cache
 #define NON_STRINGS_SIZE (sizeof(int) + sizeof(time_t) + 2 * sizeof(bool))

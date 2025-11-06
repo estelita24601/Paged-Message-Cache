@@ -5,6 +5,9 @@ MSG_TEST_FILES =  $(SRC_FILES) tests/message_test.c
 CACHE_TEST_FILES =  $(SRC_FILES) tests/cache_test.c
 PAGE_TEST_FILES = ${SRC_FILES} tests/page_test.c
 
+#make cache size smaller for testing
+TEST_CONFIG = -DCACHE_SIZE=2
+
 .PHONY: all main test_msg test_cache test clean
 .DEFAULT_TARGET := all
 
@@ -23,11 +26,12 @@ test_msg: $(MSG_TEST_FILES)
 	./msg_test
 
 test_cache: $(CACHE_TEST_FILES)
-	${CC} ${CFLAGS} $^ -o cache_test -lm
+	${CC} ${CFLAGS} ${TEST_CONFIG} $^ -o cache_test -lm
 	./cache_test
 
 test_page: $(PAGE_TEST_FILES)
-	$(CC) $(CFLAGS) $^ -o page_test -lm
+	$(CC) $(CFLAGS) ${TEST_CONFIG} $^ -o page_test -lm
+	./page_test
 
 test:  $(SRC_FILES) tests/tests.c
 	${CC} ${CFLAGS} $^ -o test -lm
