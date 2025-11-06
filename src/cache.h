@@ -45,7 +45,7 @@ typedef struct cache {
  *
  * @return cache_t*
  */
-cache_t* create_cache(message_t* msg);
+cache_t* create_cache();
 
 /**
  * @brief - add a message to the cache. if the cache is full then use the replacement strategy specified
