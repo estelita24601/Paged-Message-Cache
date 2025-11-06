@@ -364,7 +364,8 @@ char* message_to_pretty_str(message_t* message) {
         exit(1);
     }
     char* string_timeSent = ctime(&message->sentTime);
-    sprintf(str, "{id: %d, sender: %s, receiver: %s, content: %s, sentTime: %s}\n", message->id, message->sender,
+    string_timeSent[strcspn(string_timeSent, "\n")] = '\0';
+    sprintf(str, "{id: %d, sender: %s, receiver: %s, content: %s, sentTime: %s}", message->id, message->sender,
             message->receiver, message->content, string_timeSent);
     // sprintf(str, "{sender: %s, receiver: %s, content: %s, id: %d}", message->sender, message->receiver,
     // message->content, message->id);
