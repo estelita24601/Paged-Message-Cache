@@ -30,3 +30,7 @@
 - <https://www.geeksforgeeks.org/c/c-unions/>
 - <https://thelinuxcode.com/unions-in-c/>
 - <https://coderivers.org/c/c-basic/c-union/>
+
+- https://stackoverflow.com/questions/25152905/what-is-type-punning-how-type-punning-works-with-unions-in-c
+- https://www.geeksforgeeks.org/c/how-to-declare-struct-member-inside-union-in-c/
+- 
