@@ -15,7 +15,15 @@
  */
 cache_t* create_cache() {
 
-    return NULL;
+    cache_t* cache = (cache_t*)calloc(CACHE_SIZE, sizeof(cache_t*));
+    if (cache == NULL) {
+        fprintf(stderr, "ERROR: dynamic memory was not able to be allocated");
+        exit(1);
+    }
+
+    cache->page_array = ;
+
+    return cache;
 
 }
 
