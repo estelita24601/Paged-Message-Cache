@@ -10,11 +10,12 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 /**
- * @brief Create a cache object on the heap
+ * @brief Create and initialize a cache object on the heap where its members are contiguous blocks of memory.
  *
- * @return cache_t*
+ * @return cache_t* - return the initialized cache object
  */
 cache_t* create_cache() {
     cache_t* cache = (cache_t*) calloc(1, sizeof(cache_t));
@@ -23,27 +24,104 @@ cache_t* create_cache() {
         exit(1);
     }
 
-    for (int i = 0; i < CACHE_SIZE; i++) {
-        cache->page_array[i] = init_page();
-    }
     cache->page_size_bytes = MAX_MESSAGE_SIZE;
     cache->total_pages = CACHE_SIZE;
     cache->pages_occupied = 0;
     cache->last_added = -1;
 
+    for (int i = 0; i < cache->total_pages; i++) {
+        cache->page_array[i] = init_page();
+    }
+
     return cache;
 }
 
-// todo
+/**
+ * @brief - Add a message to the cache. If the cache is full then use the replacement strategy specified.
+ *
+ * @param cache cache_t* - the pointer to the cache object to add a message to
+ * @param msg message_t* - the pointer to the message object to add to the cache
+ * @param strategy replacement_strategy - LIFO or RANDOM
+ * @return bool - return true if a message has been successfully added into the cache otherwise false
+ */
 bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy) {
+    if (cache == NULL) {
+        printf("WARNING: trying to add to a cache that doesn't exist\n");
+        return false;
+    }
+
+    if (msg == NULL) {
+        printf("WARNING: message is NULL\n");
+        return false;
+    }
+
+    if (cache->pages_occupied == cache->total_pages) {
+        switch(strategy) {
+            case LIFO:
+                int last_added = cache->last_added;
+                clear_page(cache->page_array[last_added]);
+                set_page(cache->page_array[last_added], msg);
+                return true;
+            case RANDOM:
+                srand(time(NULL)); // Seed with current time
+                int replace_index = rand() % cache->total_pages;
+                
+                clear_page(cache->page_array[replace_index]);
+                set_page(cache->page_array[replace_index], msg);
+                return true;
+            }
+    } else {
+        int nextPage_index = cache->last_added + 1;
+        set_page(cache->page_array[nextPage_index], msg);
+        cache->pages_occupied = cache->pages_occupied + 1;
+        cache->last_added = nextPage_index;
+        
+        return true;
+    }
     return false;  // placeholder
 }
 
-// todo
+/**
+ * @brief - use linear search to find a message in the cache
+ *
+ * @param cache cach_t* - cache we're searching
+ * @param id int - id of the message we want to find
+ * @return message_t* - found message or NULL if not found
+ */
 message_t* cache_find(cache_t* cache, int id) {
-    return NULL;  // placeholder
+    if (id < 0) {
+        printf("WARNING: cannot find page, invalid id\n");
+        return NULL;
+    }
+    
+    if (cache == NULL) {
+        printf("WARNING: cannot find page, cache doesn't exist\n");
+        return NULL;
+    }
+    
+    int page_id = -1;
+    int cache_index = -1;
+    for (int i = 0; i < cache->pages_occupied; i++) {
+        page_id = cache->page_array[i]->id;
+        if (page_id == id) {
+            cache_index = i;
+            break;
+        }
+    }
+    
+    message_t* msg = NULL;
+    if (cache_index > 0) {
+        msg = create_msg_from_page(cache->page_array[cache_index]);
+    }
+
+    return msg;  // placeholder
 }
 
+/**
+ * @brief free the page_array inside the cache and the cache object itself
+ *
+ * @param cache cache_t* - the pointer to the cache object
+ */
 void free_cache(cache_t* cache) {
     if (cache == NULL) {
         fprintf(stderr, "ERROR: cache is NULL");
@@ -57,14 +135,33 @@ void free_cache(cache_t* cache) {
     free(cache);
 }
 
+/**
+ * @brief prints the cache object metadata
+ *
+ * @param cache cache_t* - the pointer to the cache object
+ */
 void print_cache_metadata(cache_t* cache) {
+    if (cache == NULL) {
+        printf("WARNING: trying to print a cache that doesn't exist\n");
+        return;
+    }
     printf("Total Pages = %d\n", cache->total_pages);
     printf("Pages Occupied = %d/%d\n", cache->pages_occupied, cache->total_pages);
     printf("Page Size = %d bytes\n", cache->page_size_bytes);
     printf("Index of Last Added Page = %d\n", cache->last_added);
 }
 
+/**
+ * @brief prints the cache object's member values
+ *
+ * @param cache cache_t* - the pointer to the cache object
+ */
 void print_cache_contents(cache_t* cache) {
+    if (cache == NULL) {
+        printf("WARNING: trying to print a cache that doesn't exist\n");
+        return;
+    }
+
     printf("Page Contents = [\n");
 
     for (int i = 0; i < cache->total_pages; i++) {
@@ -80,6 +177,11 @@ void print_cache_contents(cache_t* cache) {
     }
 }
 
+/**
+ * @brief - initialize empty cache page on the heap
+ *
+ * @return cache_page_t*
+ */
 cache_page_t* init_page() {
     cache_page_t* new_page = malloc(sizeof(cache_page_t));
     if (new_page == NULL) {
@@ -92,25 +194,31 @@ cache_page_t* init_page() {
     return new_page;
 }
 
-bool fill_page(cache_page_t* page, const message_t* msg) {
+/**
+ * @brief - sets the initialized cache page with the provided message
+ *
+ * @param page cache_page_t* - the pointer to the cache page object
+ * @param msg message_t* - the pointer to the message object
+ */
+void set_page(cache_page_t* page, const message_t* msg) { // if set_page doesn't fille the page do we want the program to gracefully return to the main program or crash?
     // make sure objects aren't null
     if (page == NULL) {
         printf("WARNING: trying to fill page that doesn't exist\n");
-        return false;
+        return;
     } else if (msg == NULL) {
         printf("WARNING: trying to fill page with a NULL message object\n");
-        return false;
+        return;
     }
     // make sure strings inside of message aren't null
     if (msg->sender == NULL || msg->receiver == NULL || msg->content == NULL) {
         printf("WARNING: trying to fill page with a message object that contains NULL string fields\n");
-        return false;
+        return;
     }
 
     // make sure page isn't already filled
     if (page->occupied) {
         printf("WARNING: trying to fill a page that is occupied!\n");
-        return false;
+        return;
     }
 
     // update page status
@@ -118,8 +226,8 @@ bool fill_page(cache_page_t* page, const message_t* msg) {
 
     // copy message values over
     page->id = msg->id;
-    page->sent_time = msg->sentTime;
-    page->sent_flag = msg->sentFlag;
+    page->sent_time = msg->sent_time;
+    page->sent_flag = msg->sent_flag;
 
     // copy strings over
     strncpy(page->sender, msg->sender, MAX_SENDER_SIZE - 1);
@@ -131,13 +239,17 @@ bool fill_page(cache_page_t* page, const message_t* msg) {
     page->receiver[MAX_RECEIVER_SIZE - 1] = '\0';
     page->content[MAX_CONTENT_SIZE - 1] = '\0';
 
-    return true;  // placeholder
 }
 
-bool clear_page(cache_page_t* page) {
+/**
+ * @brief - clears the cache page to prepare to set a new message input
+ *
+ * @param page cache_page_t* - the pointer to the cache page object
+ */
+void clear_page(cache_page_t* page) {
     if (page == NULL) {
         printf("WARNING: trying to clear page that doesn't exist\n");
-        return false;
+        return;
     }
     // update page status
     page->occupied = false;
@@ -149,9 +261,14 @@ bool clear_page(cache_page_t* page) {
     page->sender[0] = '\0';
     page->receiver[0] = '\0';
     page->content[0] = '\0';
-    return true;
 }
 
+/**
+ * @brief - Creates a new message object with the provided cache page.
+ *
+ * @param page cache_page_t* - the pointer to the cache page object
+ * @return message_t*
+ */
 message_t* create_msg_from_page(const cache_page_t* page) {
     if (page == NULL) {
         printf("WARNING: trying to create message from a page that doesn't exist\n");
@@ -167,6 +284,11 @@ message_t* create_msg_from_page(const cache_page_t* page) {
     return msg;
 }
 
+/**
+ * @brief - Prints the members of the input cache page.
+ *
+ * @param page cache_page_t* - the pointer to the cache page object
+ */
 void print_page(cache_page_t* page) {
     if (page == NULL) {
         printf("WARNING: trying to print page that doesn't exist\n");
@@ -187,6 +309,11 @@ void print_page(cache_page_t* page) {
     // todo: maybe add printing for sent time and sent flag
 }
 
+/**
+ * @brief - Prints the cache page metadata.
+ *
+ * @param page cache_page_t* - the pointer to the cache page object
+ */
 void print_page_metadata(cache_page_t* page) {
     if (page == NULL) {
         printf("WARNING: trying to print page that doesn't exist\n");
@@ -199,6 +326,11 @@ void print_page_metadata(cache_page_t* page) {
     }
 }
 
+/**
+ * @brief - Frees the memory allocated for a cache page.
+ *
+ * @param page cache_page_t* - the pointer to the cache page object
+ */
 void free_page(cache_page_t* page) {
     if (page == NULL) {
         return;

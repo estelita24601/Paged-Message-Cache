@@ -56,8 +56,12 @@ int get_next_id() {
  * @return char* - filename for this message ON THE HEAP
  */
 char* create_msg_filename(int msg_id) {
-    char* filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(msg_id) +
-                                            2));  // TODO: finalize a cap size for the id number
+    char* filename = NULL;
+    if (msg_id == 0) { // log10(0) = -inf
+        filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + msg_id));
+    } else {
+        filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(msg_id) + 2));  // TODO: finalize a cap size for the id number
+    }
     sprintf(filename, MESSAGE_FILENAME_FORMAT, msg_id);
     return filename;
 }
@@ -70,11 +74,11 @@ char* create_msg_filename(int msg_id) {
  * @param receiver The name of the message receiver
  * @param content The message content (if NULL or empty, will be set to "N/A")
  * @param time_sent The timestamp when the message was sent
- * @param sentFlag Whether the message has been delivered
+ * @param sent_flag Whether the message has been delivered
  * @return message_t* A newly allocated message object, or NULL if sender/receiver are invalid
  */
 message_t* create_msg_from_parts(int id, const char* sender, const char* receiver, const char* content,
-                                 const time_t time_sent, bool sentFlag) {
+                                 const time_t time_sent, bool sent_flag) {
     // first do null checks
     if (sender == NULL || receiver == NULL) {
         return NULL;
@@ -91,10 +95,10 @@ message_t* create_msg_from_parts(int id, const char* sender, const char* receive
     message_t* msg = malloc(sizeof(message_t));
 
     msg->id = id;
-    msg->sentTime = time_sent;
+    msg->sent_time = time_sent;
     msg->sender = strdup(sender);
     msg->receiver = strdup(receiver);
-    msg->sentFlag = sentFlag;
+    msg->sent_flag = sent_flag;
     msg->content = strdup(content);
 
     return msg;
@@ -112,9 +116,9 @@ message_t* create_msg(const char* sender, const char* receiver, const char* cont
     time_t now;
     time(&now);
     int id = get_next_id();
-    bool sentFlag = false;
+    bool sent_flag = false;
 
-    return create_msg_from_parts(id, sender, receiver, content, now, sentFlag);
+    return create_msg_from_parts(id, sender, receiver, content, now, sent_flag);
 }
 
 /**
@@ -302,12 +306,12 @@ char* msg_to_csv(message_t* msg) {
     char* csv_str = malloc(sizeof(char) * (len + 1));
 
     // turn time_t into formatted string
-    struct tm* tm = localtime(&msg->sentTime);
+    struct tm* tm = localtime(&msg->sent_time);
     char time[TIME_FORMAT_LEN + 1];
     strftime(time, TIME_FORMAT_LEN + 1, TIME_FORMAT, tm);
 
     // NEW EXPECTED FORMAT: id,sender,receiver,time_sent,delivered_flag,content
-    sprintf(csv_str, "%d,%s,%s,%s,%d,%s", msg->id, msg->sender, msg->receiver, time, msg->sentFlag, msg->content);
+    sprintf(csv_str, "%d,%s,%s,%s,%d,%s", msg->id, msg->sender, msg->receiver, time, msg->sent_flag, msg->content);
 
     return csv_str;
 }
@@ -363,9 +367,9 @@ char* message_to_pretty_str(message_t* message) {
         fprintf(stderr, "ERROR: dynamic memory was not able to be allocated");
         exit(1);
     }
-    char* string_timeSent = ctime(&message->sentTime);
+    char* string_timeSent = ctime(&message->sent_time);
     string_timeSent[strcspn(string_timeSent, "\n")] = '\0';
-    sprintf(str, "{id: %d, sender: %s, receiver: %s, content: %s, sentTime: %s}", message->id, message->sender,
+    sprintf(str, "{id: %d, sender: %s, receiver: %s, content: %s, sent_time: %s}", message->id, message->sender,
             message->receiver, message->content, string_timeSent);
     // sprintf(str, "{sender: %s, receiver: %s, content: %s, id: %d}", message->sender, message->receiver,
     // message->content, message->id);

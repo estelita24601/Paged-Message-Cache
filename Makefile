@@ -8,7 +8,7 @@ PAGE_TEST_FILES = ${SRC_FILES} tests/page_test.c
 #make cache size smaller for testing
 TEST_CONFIG = -DCACHE_SIZE=2
 
-.PHONY: all main test_msg test_cache test clean
+.PHONY: all main test_msg test_cache test_page test clean
 .DEFAULT_TARGET := all
 
 #all: main
@@ -42,3 +42,4 @@ test:  $(SRC_FILES) tests/tests.c
 clean:
 	rm -f *.o
 	rm -f main
+	rm -f *test

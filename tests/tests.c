@@ -51,7 +51,7 @@ int main() {
     // TEST: test retrieve_msg & message_to_pretty_str
     message_t* msg1 = retrieve_msg(1);
     char* pretty_msg1 = message_to_pretty_str(msg1);
-    printf("Msg1 Check: %s", pretty_msg1);
+    printf("Msg1 Check: %s\n", pretty_msg1);
 
     free_message(msg1);
     free(pretty_msg1);

@@ -21,11 +21,11 @@
  */
 typedef struct message_t {
     int id;           // id of the message
-    time_t sentTime;  // time the message was sent
+    time_t sent_time;  // time the message was sent
     char* sender;     // sender of the message
     char* receiver;   // receiver of the message
     char* content;    // content of the message
-    bool sentFlag;    // flag indicating if the message has been delivered
+    bool sent_flag;    // flag indicating if the message has been delivered
 } message_t;
 
 /**
@@ -54,11 +54,11 @@ char* create_msg_filename(int msg_id);
  * @param receiver The name of the message receiver
  * @param content The message content (if NULL or empty, will be set to "N/A")
  * @param time_sent The timestamp when the message was sent
- * @param sentFlag Whether the message has been delivered
+ * @param sent_flag Whether the message has been delivered
  * @return message_t* A newly allocated message object, or NULL if sender/receiver are invalid
  */
 message_t* create_msg_from_parts(int id, const char* sender, const char* receiver, const char* content,
-                                 time_t time_sent, bool sentFlag);
+                                 time_t time_sent, bool sent_flag);
 
 /**
  * @brief Construct a message element with all values input.

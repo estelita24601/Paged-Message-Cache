@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "../src/message.h"
 #include "helpers.h"
@@ -58,14 +59,27 @@ int main() {
     PRINT_COMPARE_MESSAGES(msg2, actual_msg);
 
     PRINT_HEADER("try to find message that isn't in the cache");
-    actual_msg = cache_find(cache, 4);
+    actual_msg = cache_find(cache, 5);
     PRINT_TEST_RESULTS(actual_msg == NULL, "");
 
-    free_cache(cache);
+    PRINT_HEADER("add 4th message to the cache should trigger a RANDOM replacement");
+    status = cache_add(cache, msg4, random);
+    PRINT_TEST_RESULTS(status == true, "");
+    print_cache_contents(cache);
+
+    
+    PRINT_HEADER("print a NULL cache");
+    cache_t* cache1 = NULL;
+    print_cache_contents(cache1);
+
+
+    free_message(actual_msg);
     free_message(msg0);
     free_message(msg1);
     free_message(msg2);
     free_message(msg3);
     free_message(msg4);
+    free_cache(cache);
+    
     return 0;
 }

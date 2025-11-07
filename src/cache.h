@@ -41,20 +41,19 @@ typedef struct cache {
 ///////////////////////////////////////////////////////////////////////
 
 /**
- * @brief Create a cache object on the heap
+ * @brief Create a cache object on the heap where its members are contiguous blocks of memory.
  *
- * @return cache_t*
+ * @return cache_t* - return the initialized cache object
  */
 cache_t* create_cache();
 
 /**
- * @brief - add a message to the cache. if the cache is full then use the replacement strategy specified
+ * @brief - Add a message to the cache. If the cache is full then use the replacement strategy specified.
  *
- * @param cache
- * @param msg
- * @param strategy
- * @return true
- * @return false
+ * @param cache cache_t* - the pointer to the cache object to add a message to
+ * @param msg message_t* - the pointer to the message object to add to the cache
+ * @param strategy replacement_strategy - LIFO or RANDOM
+ * @return bool - return true if a message has been successfully added into the cache otherwise false
  */
 bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy);
 
@@ -68,21 +67,23 @@ bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy);
 message_t* cache_find(cache_t* cache, int id);
 
 /**
- * @brief free the cache object
+ * @brief free the page_array inside the cache and the cache object itself.
  *
- * @param cache
+ * @param cache cache_t* - the pointer to the cache object
  */
 void free_cache(cache_t* cache);
 
 /**
+ * @brief prints the cache object metadata.
  *
- * @param cache
+ * @param cache cache_t* - the pointer to the cache object
  */
 void print_cache_metadata(cache_t* cache);
 
 /**
+ * @brief prints the cache object's member values
  *
- * @param cache
+ * @param cache cache_t* - the pointer to the cache object
  */
 void print_cache_contents(cache_t* cache);
 
@@ -94,46 +95,46 @@ void print_cache_contents(cache_t* cache);
 cache_page_t* init_page();
 
 /**
- * @brief put data for the message into the page
+ * @brief - sets the initialized cache page with the provided message
  *
- * @param page
- * @param msg
- * @return true
- * @return false
+ * @param page cache_page_t* - the pointer to the cache page object
+ * @param msg message_t* - the pointer to the message object
  */
-bool fill_page(cache_page_t* page, const message_t* msg);
+void set_page(cache_page_t* page, const message_t* msg);
 
 /**
+ * @brief - clears the cache page to prepare to set a new message input
  *
- * @param page
- * @return
+ * @param page cache_page_t* - the pointer to the cache page object
  */
-bool clear_page(cache_page_t* page);
+void clear_page(cache_page_t* page);
 
 /**
- * @brief Create a msg from page object
+ * @brief - Creates a new message object with the provided cache page.
  *
- * @param page
+ * @param page cache_page_t* - the pointer to the cache page object
  * @return message_t*
  */
 message_t* create_msg_from_page(const cache_page_t* page);
 
 /**
- * @param page
- * @return
+ * @brief - Prints the members of the input cache page.
+ *
+ * @param page cache_page_t* - the pointer to the cache page object
  */
 void print_page(cache_page_t* page);
 
 /**
+ * @brief - Prints the cache page metadata.
  *
- * @param page
+ * @param page cache_page_t* - the pointer to the cache page object
  */
 void print_page_metadata(cache_page_t* page);
 
 /**
- * @brief
+ * @brief - Frees the memory allocated for a cache page.
  *
- * @param page
+ * @param page cache_page_t* - the pointer to the cache page object
  */
 void free_page(cache_page_t* page);
 
