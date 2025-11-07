@@ -20,11 +20,11 @@
  * @brief Represents a message.
  */
 typedef struct message_t {
-    int id;           // id of the message
+    int id;            // id of the message
     time_t sent_time;  // time the message was sent
-    char* sender;     // sender of the message
-    char* receiver;   // receiver of the message
-    char* content;    // content of the message
+    char* sender;      // sender of the message
+    char* receiver;    // receiver of the message
+    char* content;     // content of the message
     bool sent_flag;    // flag indicating if the message has been delivered
 } message_t;
 
@@ -37,14 +37,6 @@ typedef struct message_t {
  * @return int The next available message ID
  */
 int get_next_id();
-
-/**
- * @brief use the id number to create the properly formatted filename for this message
- *
- * @param msg_id - int
- * @return char* - filename for this message ON THE HEAP
- */
-char* create_msg_filename(int msg_id);
 
 /**
  * @brief Creates a message object from its constituent parts
@@ -129,6 +121,13 @@ char* append_with_comma(char* original_str, const char* token);
  * @return message_t* A newly allocated message object, or NULL if the string is invalid
  */
 message_t* create_msg_from_str(const char* input_str);
+
+/**
+ *
+ * @param msg
+ * @return
+ */
+char* msg_to_csv(message_t* msg);
 
 /**
  * @brief store a message element to a message store on disk.
