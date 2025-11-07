@@ -1,5 +1,5 @@
 /**
- * @file messages.c / source code for Messages.
+ * @file message.c / source code for Messages.
  * @authors Estelita Chen & Lori Kim / CS5600 / Northeastern University
  * @brief
  * @date Nov 11, 2025 / Fall 2025
@@ -50,23 +50,6 @@ int get_next_id() {
 }
 
 /**
- * @brief use the id number to create the properly formatted filename for this message
- *
- * @param msg_id - int
- * @return char* - filename for this message ON THE HEAP
- */
-char* create_msg_filename(int msg_id) {
-    char* filename = NULL;
-    if (msg_id == 0) { // log10(0) = -inf
-        filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + msg_id));
-    } else {
-        filename = malloc(sizeof(char) * (strlen(MESSAGE_FILENAME_FORMAT) + log10(msg_id) + 2));  // TODO: finalize a cap size for the id number
-    }
-    sprintf(filename, MESSAGE_FILENAME_FORMAT, msg_id);
-    return filename;
-}
-
-/**
  * @brief Creates a message object from its constituent parts
  *
  * @param id The unique identifier for the message
@@ -85,6 +68,7 @@ message_t* create_msg_from_parts(int id, const char* sender, const char* receive
     }
     // make sure sender/receiver aren't empty strings
     else if (strlen(sender) == 0 || strlen(receiver) == 0) {
+        printf("WARNING: message sender/receiver are not allowed to be empty!\n");
         return NULL;
     }
     // allow "empty" content but fill it in with something
@@ -124,7 +108,7 @@ message_t* create_msg(const char* sender, const char* receiver, const char* cont
 /**
  * @brief Frees the memory allocated for a message struct
  *
- * @param message the message struct to free
+ * @param msg the message struct to free
  */
 void free_message(message_t* msg) {
     if (msg == NULL) {
@@ -317,45 +301,6 @@ char* msg_to_csv(message_t* msg) {
 }
 
 /**
- * @brief store a message element to a message store on disk.
- *
- * @param msg message_t* - pointer to the message element
- * @param filename char* - name of the file to store the message
- * @return int - status code (0 for success, -1 for failure)
- */
-bool store_msg(message_t* msg) {
-    if (msg == NULL) {
-        printf("ERROR: tried to store a NULL message\n");
-        return false;
-    }
-
-    char* expected_filename = create_msg_filename(msg->id);
-    FILE* file = fopen(expected_filename, "w");
-
-    if (file == NULL) {
-        printf("ERROR: unable to write to %s\n", expected_filename);
-        free(expected_filename);
-        return false;
-    } else {
-        bool success;
-
-        char* msg_csv = msg_to_csv(msg);
-        if (msg_csv != NULL) {
-            fprintf(file, "%s", msg_csv);  // QUESTION: should this have \n at the end?
-            free(msg_csv);
-            success = true;
-        } else {
-            printf("ERROR: unable to turn message object into a csv string\n");
-            success = false;
-        }
-
-        free(expected_filename);
-        fclose(file);
-        return success;
-    }
-}
-
-/**
  * @brief Returns a string value representing the message. Note: need to free the returned string after use.
  *
  * @param message the message to convert to a string
@@ -395,31 +340,18 @@ int compare_messages(message_t* msg1, message_t* msg2) {
 }
 
 /**
+ * @brief store a message element to a message store on disk.
+ *
+ * @param msg message_t* - pointer to the message element
+ * @param filename char* - name of the file to store the message
+ * @return int - status code (0 for success, -1 for failure)
+ */
+bool store_msg(message_t* msg) { return false; }
+
+/**
  * @brief
  *
  * @param id
  * @return message_t*
  */
-message_t* retrieve_msg(int id) {
-    char* expected_filename = create_msg_filename(id);
-
-    // initialize message object as null
-    message_t* msg = NULL;
-
-    // try to open the file
-    FILE* msg_file = fopen(expected_filename, "r");
-    if (msg_file == NULL) {
-        printf("WARNING: unable to find message with id = %d in the store\n", id);
-    } else {
-        char* buffer = malloc(sizeof(char) * MAX_CSV_LENGTH);
-        if (fgets(buffer, MAX_CSV_LENGTH, msg_file) == NULL) {
-            printf("WARNING: unable to read contents of %s or contents do not exist\n", expected_filename);
-        } else {
-            msg = create_msg_from_str(buffer);
-        }
-        free(buffer);
-    }
-
-    free(expected_filename);
-    return msg;
-}
+message_t* retrieve_msg(int id) { return NULL; }

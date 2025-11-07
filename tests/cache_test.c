@@ -8,12 +8,13 @@
 
 #include "../src/cache.h"
 
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
+#include "../src/disk.h"
 #include "../src/message.h"
 #include "helpers.h"
 
@@ -30,11 +31,11 @@ int main() {
     print_cache_contents(cache);
 
     // create objects and values for testing
-    message_t* msg0 = retrieve_msg(0);
-    message_t* msg1 = retrieve_msg(1);
-    message_t* msg2 = retrieve_msg(2);
-    message_t* msg3 = retrieve_msg(3);
-    message_t* msg4 = retrieve_msg(4);
+    message_t* msg0 = disk_find(0);
+    message_t* msg1 = disk_find(1);
+    message_t* msg2 = disk_find(2);
+    message_t* msg3 = disk_find(3);
+    message_t* msg4 = disk_find(4);
 
     replacement_strategy lifo = LIFO;
     replacement_strategy random = RANDOM;
@@ -89,13 +90,12 @@ int main() {
     print_cache_contents(cache1);
     printf("\n");
 
-
     free_message(msg0);
     free_message(msg1);
     free_message(msg2);
     free_message(msg3);
     free_message(msg4);
     free_cache(cache);
-    
+
     return 0;
 }

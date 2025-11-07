@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include "../src/cache.h"
+#include "../src/disk.h"
 #include "helpers.h"
 
 /**
@@ -50,7 +51,7 @@ int main() {
     */
 
     // TEST: test retrieve_msg & message_to_pretty_str
-    message_t* msg1 = retrieve_msg(1);
+    message_t* msg1 = disk_find(1);
     char* pretty_msg1 = message_to_pretty_str(msg1);
     printf("Msg1 Check: %s", pretty_msg1);
 
