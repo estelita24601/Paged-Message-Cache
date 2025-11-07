@@ -21,7 +21,7 @@ int main() {
 
     PRINT_HEADER("load message into page");
     message_t* msg1 = create_msg_from_str("0,obi-wan,grievous,2025-10-31 20:40:55,0,hello there");
-    actual = fill_page(page1, msg1);
+    actual = set_page(page1, msg1);
     print_page(page1);
     PRINT_TEST_RESULTS(actual == true, "");
 
@@ -32,25 +32,25 @@ int main() {
 
     PRINT_HEADER("load message into page again");
     message_t* msg2 = create_msg_from_str("2,alexander,angelica,2025-10-31 21:40:55,0,my dearest, angelica");
-    actual = fill_page(page1, msg2);
+    actual = set_page(page1, msg2);
     print_page(page1);
     PRINT_TEST_RESULTS(actual == true, "");
 
     PRINT_HEADER("edge case of trying to fill already filled page");
-    actual = fill_page(page1, msg1);
+    actual = set_page(page1, msg1);
     PRINT_TEST_RESULTS(actual == false, "expected the function to prevent unauthorized overwrite of filled page");
 
     PRINT_HEADER("edge case of trying to fill page with NULL message");
     clear_page(page1);
-    actual = fill_page(page1, NULL);
+    actual = set_page(page1, NULL);
     PRINT_TEST_RESULTS(actual == false, "expected the function to prevent filling the page with NULL message object");
 
     PRINT_HEADER("edge case of trying to fill NULL page");
-    actual = fill_page(NULL, msg1);
+    actual = set_page(NULL, msg1);
     PRINT_TEST_RESULTS(actual == false, "expected the function to catch if page is NULL");
 
     PRINT_HEADER("create message from page");
-    fill_page(page1, msg1);
+    set_page(page1, msg1);
     message_t* actual_msg = create_msg_from_page(page1);
     PRINT_COMPARE_MESSAGES(msg1, actual_msg);
 
