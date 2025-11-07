@@ -102,15 +102,19 @@ cache_page_t* init_page();
  *
  * @param page cache_page_t* - the pointer to the cache page object
  * @param msg message_t* - the pointer to the message object
+ * 
+ * @return bool - true if page is set otherwise false
  */
-void set_page(cache_page_t* page, const message_t* msg);
+bool set_page(cache_page_t* page, const message_t* msg);
 
 /**
  * @brief - clears the cache page to prepare to set a new message input
  *
  * @param page cache_page_t* - the pointer to the cache page object
+ * 
+ * @return bool - true if page is cleared otherwise false
  */
-void clear_page(cache_page_t* page);
+bool clear_page(cache_page_t* page);
 
 /**
  * @brief - Creates a new message object with the provided cache page.

@@ -208,26 +208,28 @@ cache_page_t* init_page() {
  *
  * @param page cache_page_t* - the pointer to the cache page object
  * @param msg message_t* - the pointer to the message object
+ * 
+ * @return bool - true if page is set otherwise false
  */
-void set_page(cache_page_t* page, const message_t* msg) { // if set_page doesn't fille the page do we want the program to gracefully return to the main program or crash?
+bool set_page(cache_page_t* page, const message_t* msg) { // if set_page doesn't fille the page do we want the program to gracefully return to the main program or crash?
     // make sure objects aren't null
     if (page == NULL) {
         printf("WARNING: trying to fill page that doesn't exist\n");
-        return;
+        return false;
     } else if (msg == NULL) {
         printf("WARNING: trying to fill page with a NULL message object\n");
-        return;
+        return false;
     }
     // make sure strings inside of message aren't null
     if (msg->sender == NULL || msg->receiver == NULL || msg->content == NULL) {
         printf("WARNING: trying to fill page with a message object that contains NULL string fields\n");
-        return;
+        return false;
     }
 
     // make sure page isn't already filled
     if (page->occupied) {
         printf("WARNING: trying to fill a page that is occupied!\n");
-        return;
+        return false;
     }
 
     // update page status
@@ -248,17 +250,20 @@ void set_page(cache_page_t* page, const message_t* msg) { // if set_page doesn't
     page->receiver[MAX_RECEIVER_SIZE - 1] = '\0';
     page->content[MAX_CONTENT_SIZE - 1] = '\0';
 
+    return true;
 }
 
 /**
  * @brief - clears the cache page to prepare to set a new message input
  *
  * @param page cache_page_t* - the pointer to the cache page object
+ * 
+ * @return bool - true if page is cleared otherwise false
  */
-void clear_page(cache_page_t* page) {
+bool clear_page(cache_page_t* page) {
     if (page == NULL) {
         printf("WARNING: trying to clear page that doesn't exist\n");
-        return;
+        return false;
     }
     // update page status
     page->occupied = false;
@@ -270,6 +275,8 @@ void clear_page(cache_page_t* page) {
     page->sender[0] = '\0';
     page->receiver[0] = '\0';
     page->content[0] = '\0';
+
+    return true;
 }
 
 /**
