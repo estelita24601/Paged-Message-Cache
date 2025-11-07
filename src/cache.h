@@ -65,9 +65,9 @@ bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy);
  *
  * @param cache cach_t* - cache we're searching
  * @param id int - id of the message we want to find
- * @return bool - true if found message or false if not found
+ * @return cache_page_t* - found cache page or NULL if not found
  */
-bool cache_find(cache_t* cache, int id);
+cache_page_t* cache_find(cache_t* cache, int id);
 
 /**
  * @brief free the page_array inside the cache and the cache object itself.

@@ -58,10 +58,15 @@ bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy) {
         return false;
     }
 
-    
-    if (cache->pages_occupied == cache->total_pages) {
-        cache->total_accesses = cache->total_accesses + 1; // not sure where to place this since not certain if we should be counting warm-ups or not
-        if (cache_find(cache, msg->id) == false) {
+
+    /*
+    cache->total_accesses = cache->total_accesses + 1; // not sure where to place this since not certain if we should be counting warm-ups or not
+    cache->hits = cache->hits + 1;
+    cache->miss = cache->miss + 1;
+    */
+   cache_page_t* found_page = cache_find(cache, msg->id);
+    if (found_page == NULL) {
+        if (cache->pages_occupied == cache->total_pages) {
             switch(strategy) {
                 case LIFO:
                     int last_added = cache->last_added;
@@ -76,15 +81,14 @@ bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy) {
                     set_page(cache->page_array[replace_index], msg);
                     return true;
                 }
-            }
-            return false;
-    } else {
-        int nextPage_index = cache->last_added + 1;
-        set_page(cache->page_array[nextPage_index], msg);
-        cache->pages_occupied = cache->pages_occupied + 1;
-        cache->last_added = nextPage_index;
-        
-        return true;
+        } else {
+            int nextPage_index = cache->last_added + 1;
+            set_page(cache->page_array[nextPage_index], msg);
+            cache->pages_occupied = cache->pages_occupied + 1;
+            cache->last_added = nextPage_index;
+            
+            return true;
+        }
     }
 
     return false;  // placeholder
@@ -95,37 +99,28 @@ bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy) {
  *
  * @param cache cach_t* - cache we're searching
  * @param id int - id of the message we want to find
- * @return message_t* - found message or NULL if not found
+ * @return cache_page_t* - found cache page or NULL if not found
  */
-bool cache_find(cache_t* cache, int id) {
+cache_page_t* cache_find(cache_t* cache, int id) {
     if (id < 0) {
         printf("WARNING: cannot find page, invalid id\n");
-        return false;
+        return NULL;
     }
     
     if (cache == NULL) {
         printf("WARNING: cannot find page, cache doesn't exist\n");
-        return false;
+        return NULL;
     }
     
     int page_id = -1;
-    int cache_index = -1;
     for (int i = 0; i < cache->pages_occupied; i++) {
         page_id = cache->page_array[i]->id;
         if (page_id == id) {
-            cache_index = i;
-            break;
+            return cache->page_array[i];
         }
     }
     
-    if (cache_index > -1) {
-        cache->hits = cache->hits + 1;
-        return true;
-    } else {
-        cache->miss = cache->miss + 1;
-        return false;
-    }
-
+    return NULL;
 }
 
 /**

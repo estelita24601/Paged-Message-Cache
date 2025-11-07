@@ -57,16 +57,17 @@ int main() {
     print_cache_metadata(cache);
     print_cache_contents(cache);
 
-    /*
+
     PRINT_HEADER("try to find message in the cache");
-    status = cache_find(cache, 2);
-    PRINT_TEST_RESULTS(status == true, "");
+    message_t* actual_msg = create_msg_from_page(cache_find(cache, 2));
+    PRINT_COMPARE_MESSAGES(msg2, actual_msg);
 
     PRINT_HEADER("try to find message that isn't in the cache");
-    status = cache_find(cache, 5);
-    PRINT_TEST_RESULTS(status == false, "");
-    */
+    actual_msg = create_msg_from_page(cache_find(cache, 5));
+    PRINT_TEST_RESULTS(actual_msg == NULL, "");
 
+    
+    // TEST - out-of-memory detection
     PRINT_HEADER("add 4th message to the cache should trigger a RANDOM replacement");
     status = cache_add(cache, msg2, lifo);
     PRINT_TEST_RESULTS(status == false, "");
@@ -79,7 +80,9 @@ int main() {
     print_cache_metadata(cache);
     print_cache_contents(cache);
 
-    
+    // TEST - out-of-disk detection
+
+    // TEST - other
     PRINT_HEADER("check what happens when printing a NULL cache");
     cache_t* cache1 = NULL;
     printf("\n");
