@@ -28,6 +28,9 @@ cache_t* create_cache() {
     cache->total_pages = CACHE_SIZE;
     cache->pages_occupied = 0;
     cache->last_added = -1;
+    cache->total_accesses = 0;
+    cache->hits = 0;
+    cache->miss = 0;
 
     for (int i = 0; i < cache->total_pages; i++) {
         cache->page_array[i] = init_page();
@@ -55,21 +58,26 @@ bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy) {
         return false;
     }
 
+    
     if (cache->pages_occupied == cache->total_pages) {
-        switch(strategy) {
-            case LIFO:
-                int last_added = cache->last_added;
-                clear_page(cache->page_array[last_added]);
-                set_page(cache->page_array[last_added], msg);
-                return true;
-            case RANDOM:
-                srand(time(NULL)); // Seed with current time
-                int replace_index = rand() % cache->total_pages;
-                
-                clear_page(cache->page_array[replace_index]);
-                set_page(cache->page_array[replace_index], msg);
-                return true;
+        cache->total_accesses = cache->total_accesses + 1; // not sure where to place this since not certain if we should be counting warm-ups or not
+        if (cache_find(cache, msg->id) == false) {
+            switch(strategy) {
+                case LIFO:
+                    int last_added = cache->last_added;
+                    clear_page(cache->page_array[last_added]);
+                    set_page(cache->page_array[last_added], msg);
+                    return true;
+                case RANDOM:
+                    srand(time(NULL)); // Seed with current time
+                    int replace_index = rand() % cache->total_pages;
+                    
+                    clear_page(cache->page_array[replace_index]);
+                    set_page(cache->page_array[replace_index], msg);
+                    return true;
+                }
             }
+            return false;
     } else {
         int nextPage_index = cache->last_added + 1;
         set_page(cache->page_array[nextPage_index], msg);
@@ -78,6 +86,7 @@ bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy) {
         
         return true;
     }
+
     return false;  // placeholder
 }
 
@@ -88,15 +97,15 @@ bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy) {
  * @param id int - id of the message we want to find
  * @return message_t* - found message or NULL if not found
  */
-message_t* cache_find(cache_t* cache, int id) {
+bool cache_find(cache_t* cache, int id) {
     if (id < 0) {
         printf("WARNING: cannot find page, invalid id\n");
-        return NULL;
+        return false;
     }
     
     if (cache == NULL) {
         printf("WARNING: cannot find page, cache doesn't exist\n");
-        return NULL;
+        return false;
     }
     
     int page_id = -1;
@@ -109,12 +118,14 @@ message_t* cache_find(cache_t* cache, int id) {
         }
     }
     
-    message_t* msg = NULL;
-    if (cache_index > 0) {
-        msg = create_msg_from_page(cache->page_array[cache_index]);
+    if (cache_index > -1) {
+        cache->hits = cache->hits + 1;
+        return true;
+    } else {
+        cache->miss = cache->miss + 1;
+        return false;
     }
 
-    return msg;  // placeholder
 }
 
 /**
@@ -149,6 +160,9 @@ void print_cache_metadata(cache_t* cache) {
     printf("Pages Occupied = %d/%d\n", cache->pages_occupied, cache->total_pages);
     printf("Page Size = %d bytes\n", cache->page_size_bytes);
     printf("Index of Last Added Page = %d\n", cache->last_added);
+    printf("Total Accesses = %d\n", cache->total_accesses);
+    printf("Cache Hits = %d\n", cache->hits);
+    printf("Cache Misses = %d\n", cache->miss);
 }
 
 /**

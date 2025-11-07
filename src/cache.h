@@ -36,6 +36,9 @@ typedef struct cache {
     int total_pages;      // max messages this cache can hold
     int pages_occupied;   // how many messages currently in the cache
     int last_added;       // index of last page added to cache
+    int total_accesses;   // total number of requests sent to cache
+    int hits;       // number of messages found in cache
+    int miss;       // number of messages not found in cache
 } cache_t;
 
 ///////////////////////////////////////////////////////////////////////
@@ -62,9 +65,9 @@ bool cache_add(cache_t* cache, message_t* msg, replacement_strategy strategy);
  *
  * @param cache cach_t* - cache we're searching
  * @param id int - id of the message we want to find
- * @return message_t* - found message or NULL if not found
+ * @return bool - true if found message or false if not found
  */
-message_t* cache_find(cache_t* cache, int id);
+bool cache_find(cache_t* cache, int id);
 
 /**
  * @brief free the page_array inside the cache and the cache object itself.
