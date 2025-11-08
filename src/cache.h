@@ -117,6 +117,14 @@ bool set_page(cache_page_t* page, const message_t* msg);
 bool clear_page(cache_page_t* page);
 
 /**
+ *
+ * @param page
+ * @param msg
+ * @return
+ */
+bool replace_page(cache_page_t* page, const message_t* msg);
+
+/**
  * @brief - Creates a new message object with the provided cache page.
  *
  * @param page cache_page_t* - the pointer to the cache page object

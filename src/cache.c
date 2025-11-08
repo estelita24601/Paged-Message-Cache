@@ -64,48 +64,41 @@ bool cache_add(cache_t* cache, message_t* msg) {
         return false;
     }
 
-    /*
-    cache->total_accesses = cache->total_accesses + 1; // not sure where to place this since not certain if we should be
-    counting warm-ups or not cache->hits = cache->hits + 1; cache->miss = cache->miss + 1;
-    */
+    // check if this message is already in the cache
     cache_page_t* found_page = cache_find(cache, msg->id);
 
-    // check if this message is already in the cache
-    if (found_page == NULL) {
-        if (cache->pages_occupied == cache->total_pages) {
-            // cache is full so need to replace a page
-            switch (cache->strategy) {
-                case LIFO:
-                    int last_added = cache->last_added;
-                    clear_page(cache->page_array[last_added]);
-                    set_page(cache->page_array[last_added], msg);
-                    return true;
-                case RANDOM:
-                    srand(time(NULL));  // Seed with current time
-                    int replace_index = rand() % cache->total_pages;
-
-                    clear_page(cache->page_array[replace_index]);
-                    set_page(cache->page_array[replace_index], msg);
-                    return true;
-            }
-        } else {
-            // don't need to replace a page just fill an empty page
-            int nextPage_index = cache->last_added + 1;
-            set_page(cache->page_array[nextPage_index], msg);
-            cache->pages_occupied = cache->pages_occupied + 1;
-            cache->last_added = nextPage_index;
-
-            return true;
-        }
-    } else {
-        // message is already in the cache
-        // update that page in the cache in case there are edits
-        clear_page(found_page);
-        set_page(found_page, msg);
-        return true;
+    // update the message already in the cache
+    if (found_page != NULL) {
+        return replace_page(found_page, msg);
     }
 
-    return false;  // placeholder
+    // if cache is full then need to replace a page
+    if (cache->pages_occupied == cache->total_pages) {
+        cache_page_t* page_to_replace;
+
+        switch (cache->strategy) {
+            case LIFO:
+                page_to_replace = cache->page_array[cache->last_added];
+                return replace_page(page_to_replace, msg);
+            case RANDOM:
+                srand(time(NULL));  // Seed with current time
+                int random_index = rand() % cache->total_pages;
+                page_to_replace = cache->page_array[random_index];
+                return replace_page(page_to_replace, msg);
+            default:
+                printf("ERROR: cache does not have a replacement strategy\n");
+                exit(1);
+        }
+    }
+    // implied else: don't need to replace a page just fill an empty page
+    int nextPage_index = cache->last_added + 1;
+    set_page(cache->page_array[nextPage_index], msg);
+
+    // update cache meta data
+    cache->pages_occupied += 1;
+    cache->last_added = nextPage_index;
+
+    return true;
 }
 
 /**
@@ -126,10 +119,10 @@ cache_page_t* cache_find(cache_t* cache, int id) {
         return NULL;
     }
 
-    int page_id = -1;
+    int curr_msg_id = -1;
     for (int i = 0; i < cache->pages_occupied; i++) {
-        page_id = cache->page_array[i]->id;
-        if (page_id == id) {
+        curr_msg_id = cache->page_array[i]->id;
+        if (curr_msg_id == id) {
             return cache->page_array[i];
         }
     }
@@ -149,7 +142,7 @@ void free_cache(cache_t* cache) {
     }
 
     for (int i = 0; i < cache->total_pages; i++) {
-        free(cache->page_array[i]);
+        free_page(cache->page_array[i]);
     }
 
     free(cache);
@@ -292,6 +285,27 @@ bool clear_page(cache_page_t* page) {
     page->content[0] = '\0';
 
     return true;
+}
+
+/**
+ *
+ * @param page cache_page_t* - pointer to the page whose contents we are going to replace
+ * @param msg message_t* - message we're placing in the page
+ * @return true - on success
+ * @return false - if unable to replace contents of the page
+ */
+bool replace_page(cache_page_t* page, const message_t* msg) {
+    if (page == NULL) {
+        printf("ERROR: trying to replace page that doesn't exist\n");
+        exit(1);
+    }
+    if (msg == NULL) {
+        printf("WARNING: trying to replace page with a NULL message object\n");
+        return false;
+    }
+
+    clear_page(page);
+    return set_page(page, msg);
 }
 
 /**
