@@ -6,17 +6,17 @@
  *
  */
 
-#include "../src/cache.h"
-
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "helpers.h"
+
 #include "../src/disk.h"
 #include "../src/message.h"
-#include "helpers.h"
+#include "../src/cache.h"
 
 /**
  * @brief Main function for tests of multiprocess cipher programs to encrypt words.
@@ -37,8 +37,6 @@ int main() {
     message_t* msg3 = disk_find(3);
     message_t* msg4 = disk_find(4);
 
-    replacement_strategy lifo = LIFO;
-    replacement_strategy random = RANDOM;
 
     PRINT_HEADER("add 1st message to the cache");
     bool status = cache_add(lifo_cache, msg0);

@@ -2,6 +2,8 @@
     "files.associations": {
         "cache.h": "c",
         "messages.h": "c",
-        "message.h": "c"
+        "message.h": "c",
+        "disk.h": "c",
+        "config.h": "c"
     }
 }

@@ -7,10 +7,7 @@
  */
 
 #include "cache.h"
-
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
+#include "message.h"
 
 /**
  * @brief Create and initialize a cache object on the heap where its members are contiguous blocks of memory.

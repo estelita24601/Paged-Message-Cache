@@ -8,19 +8,13 @@
 
 #define _XOPEN_SOURCE 700
 
-#include "message.h"
-
-#include <math.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-
 #include "cache.h"
+#include "message.h"
 #include "disk.h"
 
+
 static int NEXT_ID;
+
 
 /**
  * @brief Gets the next available message ID and updates the counter
@@ -365,7 +359,7 @@ bool store_msg(message_t* msg, cache_t* cache) {
     if (cache == NULL) {
         cache_success = false;
     } else {
-        cache_success = cache_add(cache, msg, RANDOM);
+        cache_success = cache_add(cache, msg);
     }
 
     if (cache_success && disk_success) {
@@ -411,7 +405,7 @@ message_t* retrieve_msg(int id, cache_t* cache) {
 
     if (msg != NULL) {
         // now need to add this to the cache
-        if (cache_add(msg) == true) {
+        if (cache_add(cache, msg) == true) {
             return msg;
         }
         printf("ERROR: found message in the disk but wasn't able to add it to the cache\n");

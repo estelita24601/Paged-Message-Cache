@@ -12,22 +12,14 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <math.h>
 #include <time.h>
 
 #include "cache.h"
 #include "config.h"
+#include "disk.h"
 
-/**
- * @brief Represents a message.
- */
-typedef struct message_t {
-    int id;            // id of the message
-    time_t sent_time;  // time the message was sent
-    char* sender;      // sender of the message
-    char* receiver;    // receiver of the message
-    char* content;     // content of the message
-    bool sent_flag;    // flag indicating if the message has been delivered
-} message_t;
 
 /**
  * @brief Gets the next available message ID and updates the counter

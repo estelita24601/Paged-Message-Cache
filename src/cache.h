@@ -10,11 +10,28 @@
 #define CACHE_H
 
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #include "config.h"
-#include "message.h"
+
 
 typedef enum { LIFO, RANDOM } replacement_strategy;
+
+
+/**
+ * @brief Represents a message.
+ */
+typedef struct message {
+    int id;            // id of the message
+    time_t sent_time;  // time the message was sent
+    char* sender;      // sender of the message
+    char* receiver;    // receiver of the message
+    char* content;     // content of the message
+    bool sent_flag;    // flag indicating if the message has been delivered
+} message_t;
 
 typedef struct cache_page {
     bool occupied;  // flag for if this page is occupied

@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall
-SRC_FILES = src/message.c src/cache.c tests/helpers.c
+SRC_FILES = src/message.c src/cache.c src/disk.c tests/helpers.c
 MSG_TEST_FILES =  $(SRC_FILES) tests/message_test.c
 CACHE_TEST_FILES =  $(SRC_FILES) tests/cache_test.c
 PAGE_TEST_FILES = ${SRC_FILES} tests/page_test.c
