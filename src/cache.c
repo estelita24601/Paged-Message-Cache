@@ -64,37 +64,45 @@ bool cache_add(cache_t* cache, message_t* msg) {
         return false;
     }
 
-
     /*
-    cache->total_accesses = cache->total_accesses + 1; // not sure where to place this since not certain if we should be counting warm-ups or not
-    cache->hits = cache->hits + 1;
-    cache->miss = cache->miss + 1;
+    cache->total_accesses = cache->total_accesses + 1; // not sure where to place this since not certain if we should be
+    counting warm-ups or not cache->hits = cache->hits + 1; cache->miss = cache->miss + 1;
     */
-   cache_page_t* found_page = cache_find(cache, msg->id);
+    cache_page_t* found_page = cache_find(cache, msg->id);
+
+    // check if this message is already in the cache
     if (found_page == NULL) {
         if (cache->pages_occupied == cache->total_pages) {
-            switch(strategy) {
+            // cache is full so need to replace a page
+            switch (cache->strategy) {
                 case LIFO:
                     int last_added = cache->last_added;
                     clear_page(cache->page_array[last_added]);
                     set_page(cache->page_array[last_added], msg);
                     return true;
                 case RANDOM:
-                    srand(time(NULL)); // Seed with current time
+                    srand(time(NULL));  // Seed with current time
                     int replace_index = rand() % cache->total_pages;
-                    
+
                     clear_page(cache->page_array[replace_index]);
                     set_page(cache->page_array[replace_index], msg);
                     return true;
-                }
+            }
         } else {
+            // don't need to replace a page just fill an empty page
             int nextPage_index = cache->last_added + 1;
             set_page(cache->page_array[nextPage_index], msg);
             cache->pages_occupied = cache->pages_occupied + 1;
             cache->last_added = nextPage_index;
-            
+
             return true;
         }
+    } else {
+        // message is already in the cache
+        // update that page in the cache in case there are edits
+        clear_page(found_page);
+        set_page(found_page, msg);
+        return true;
     }
 
     return false;  // placeholder
