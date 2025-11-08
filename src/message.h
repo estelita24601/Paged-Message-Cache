@@ -131,12 +131,13 @@ message_t* create_msg_from_str(const char* input_str);
 char* msg_to_csv(message_t* msg);
 
 /**
- * @brief store a message element to a message store on disk.
+ * @brief store a message element to the disk AND to the cache
+ * if this message already exists in either then that message is replaced with this one
  *
  * @param msg message_t* - pointer to the message element
- * @param cache
- * @param filename char* - name of the file to store the message
- * @return int - status code (0 for success, -1 for failure)
+ * @param cache cache_t* - pointer to the cache we should store element inside of
+ * @return true on success
+ * @return false on failure
  */
 bool store_msg(message_t* msg, cache_t* cache);
 
@@ -157,15 +158,14 @@ char* message_to_pretty_str(message_t* message);
  */
 int compare_messages(message_t* msg1, message_t* msg2);
 
-// todo: retrieve by message ID #
-// each message is now in its own file
-// MESSAGE_FILENAME_FORMAT:message%d.txt
 /**
- * @brief
+ * @brief first searches the cache for a message with the given ID and then searches the disk store
+ * if message was not in the cache this function adds it to the cache
  *
- * @param id
- * @param cache
- * @return message_t*
+ * @param id int - unique identifier for the message we want to retrieve
+ * @param cache cache_t* - pointer to cache we'll search for the message
+ * @return message_t* - message that we found
+ * @return NULL - if message couldn't be found in the cache OR in the disk store
  */
 message_t* retrieve_msg(int id, cache_t* cache);
 
