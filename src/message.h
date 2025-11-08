@@ -32,6 +32,14 @@
 int get_next_id();
 
 /**
+ * @brief updates the next available message ID
+ *
+ * increments the current ID read from a file and saves it back to the file.
+ *
+ */
+void update_next_id();
+
+/**
  * @brief Creates a message object from its constituent parts
  *
  * @param id The unique identifier for the message
@@ -148,7 +156,7 @@ char* message_to_pretty_str(message_t* message);
  * @param msg2 the second message to compare
  * @return -1 if the msg1 comes before msg2, 0 if they are equal, 1 if msg1 comes after msg2
  */
-int compare_messages(message_t* msg1, message_t* msg2);
+// int compare_messages(message_t* msg1, message_t* msg2);
 
 /**
  * @brief first searches the cache for a message with the given ID and then searches the disk store

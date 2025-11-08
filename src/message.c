@@ -8,12 +8,10 @@
 
 #define _XOPEN_SOURCE 700
 
-#include "cache.h"
 #include "message.h"
-#include "disk.h"
 
 
-static int NEXT_ID;
+// static int NEXT_ID;
 
 
 /**
@@ -25,25 +23,36 @@ static int NEXT_ID;
  * @return int The next available message ID
  */
 int get_next_id() {
+    int next_id = -1;
     // get ID from the file
     FILE* id_file = fopen(NEXT_ID_PATH, "r");
     if (id_file) {
-        fscanf(id_file, "%d", &NEXT_ID);
+        fscanf(id_file, "%d", &next_id);
         fclose(id_file);
     } else {
-        NEXT_ID = 0;  // initialize first id number
+        next_id = 0;  // initialize first id number
     }
 
+    return next_id;
+}
+
+/**
+ * @brief updates the next available message ID
+ *
+ * increments the current ID read from a file and saves it back to the file.
+ *
+ */
+void update_next_id() {
+    int next_id = get_next_id();
+
     // update file with next ID number
-    id_file = fopen(NEXT_ID_PATH, "w");
+    FILE* id_file = fopen(NEXT_ID_PATH, "w");
     if (id_file) {
-        fprintf(id_file, "%d", NEXT_ID + 1);
+        fprintf(id_file, "%d", next_id + 1);
         fclose(id_file);
     } else {
         printf("WARNING: unable to save ID to file, next message ID will likely clash\n");
     }
-
-    return NEXT_ID;
 }
 
 /**
@@ -97,6 +106,7 @@ message_t* create_msg(const char* sender, const char* receiver, const char* cont
     time_t now;
     time(&now);
     int id = get_next_id();
+    update_next_id();
     bool sent_flag = false;
 
     return create_msg_from_parts(id, sender, receiver, content, now, sent_flag);
@@ -265,6 +275,11 @@ message_t* create_msg_from_str(const char* input_str) {
     return msg;
 }
 
+/**
+ *
+ * @param msg
+ * @return
+ */
 char* msg_to_csv(message_t* msg) {
     if (msg == NULL) {
         return NULL;
@@ -325,6 +340,7 @@ char* message_to_pretty_str(message_t* message) {
  * @param msg2 the second message to compare
  * @return -1 if the msg1 comes before msg2, 0 if they are equal, 1 if msg1 comes after msg2
  */
+/*
 int compare_messages(message_t* msg1, message_t* msg2) {
     if (msg1->id < msg2->id) {
         return -1;
@@ -335,6 +351,7 @@ int compare_messages(message_t* msg1, message_t* msg2) {
     }
     return 0;
 }
+*/
 
 /**
  * @brief store a message element to the disk AND to the cache
@@ -393,11 +410,21 @@ message_t* retrieve_msg(int id, cache_t* cache) {
 
     cache_page_t* cache_page = cache_find(cache, id);
     if (cache_page != NULL) {
+        // is a cache hit if the cache is full and cache_page does not return NULL
+        if (cache->pages_occupied == cache->total_pages) {
+            cache->hits += 1;
+        }
+
         message_t* msg = create_msg_from_page(cache_page);
         if (msg == NULL) {
             printf("WARNING: found message in the cache but could not turn it into a message object\n");
         }
         return msg;
+    }
+
+    // else is a cache miss if cache is full and cache_page returns NULL
+    if (cache->pages_occupied == cache->total_pages) {
+        cache->miss += 1;
     }
 
     // implied else: message isn't in the cache but might be in the disk

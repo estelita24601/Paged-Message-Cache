@@ -1,7 +1,12 @@
 #ifndef DISK_H
 #define DISK_H
 
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+
 #include "message.h"
+
 
 message_t* disk_find(int id);
 

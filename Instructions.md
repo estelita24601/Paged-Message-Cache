@@ -88,7 +88,7 @@ not share code.
     * [ ] number of cache misses per 1000 random message accesses
     * [ ] cache hit ratio per 1000 random message accesses
 
-* [ ] You need to create a representative message set for testing.
+* [x] You need to create a representative message set for testing.
 
 You may share your testing approach, test message mix, and metrics with your
 colleagues on Teams and discuss. You may discuss the calculation

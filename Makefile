@@ -13,9 +13,9 @@ TEST_CONFIG = -DCACHE_SIZE=4
 
 #all: main
 #
-#main: $(SRC_FILES)
-#	${CC} ${CFLAGS} $^ -o main
-#	./message
+main: $(SRC_FILES) src/main.c
+	${CC} ${CFLAGS} $^ -o main -lm
+	./main
 
 # all: messages.c
 # 	${CC} ${CFLAGS} $^ -o message

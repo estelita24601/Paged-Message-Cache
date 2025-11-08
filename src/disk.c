@@ -1,9 +1,7 @@
 
-#include "disk.h"
 #define _XOPEN_SOURCE 700
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
+
+#include "disk.h"
 
 /**
  * @brief use the id number to create the properly formatted filename for this message

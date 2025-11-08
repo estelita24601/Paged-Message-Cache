@@ -20,7 +20,6 @@
 
 typedef enum { LIFO, RANDOM } replacement_strategy;
 
-
 /**
  * @brief Represents a message.
  */
@@ -54,7 +53,7 @@ typedef struct cache {
     int total_pages;      // max messages this cache can hold
     int pages_occupied;   // how many messages currently in the cache
     int last_added;       // index of last page added to cache
-    int total_accesses;   // total number of requests sent to cache
+    // int total_accesses;   // total number of requests sent to cache
     int hits;             // number of messages found in cache
     int miss;             // number of messages not found in cache
 } cache_t;

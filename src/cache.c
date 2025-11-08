@@ -31,7 +31,6 @@ cache_t* create_cache(replacement_strategy strategy) {
     // initialize values for an empty unused cache
     cache->pages_occupied = 0;
     cache->last_added = -1;
-    cache->total_accesses = 0;
     cache->hits = 0;
     cache->miss = 0;
 
@@ -159,7 +158,6 @@ void print_cache_metadata(cache_t* cache) {
     printf("Pages Occupied = %d/%d\n", cache->pages_occupied, cache->total_pages);
     printf("Page Size = %d bytes\n", cache->page_size_bytes);
     printf("Index of Last Added Page = %d\n", cache->last_added);
-    printf("Total Accesses = %d\n", cache->total_accesses);
     printf("Cache Hits = %d\n", cache->hits);
     printf("Cache Misses = %d\n", cache->miss);
 }

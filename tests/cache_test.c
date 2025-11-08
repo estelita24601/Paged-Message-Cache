@@ -36,6 +36,7 @@ int main() {
     message_t* msg2 = disk_find(2);
     message_t* msg3 = disk_find(3);
     message_t* msg4 = disk_find(4);
+    message_t* msg5 = disk_find(5);
 
 
     PRINT_HEADER("add 1st message to the cache");
@@ -76,6 +77,7 @@ int main() {
     PRINT_TEST_RESULTS(status == true, "");
     print_cache_metadata(random_cache);
     print_cache_contents(random_cache);
+
 
     // TEST - out-of-disk detection
 
