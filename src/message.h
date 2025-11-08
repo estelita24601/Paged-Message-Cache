@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "cache.h"
 #include "config.h"
 
 /**
@@ -133,10 +134,11 @@ char* msg_to_csv(message_t* msg);
  * @brief store a message element to a message store on disk.
  *
  * @param msg message_t* - pointer to the message element
+ * @param cache
  * @param filename char* - name of the file to store the message
  * @return int - status code (0 for success, -1 for failure)
  */
-bool store_msg(message_t* msg);
+bool store_msg(message_t* msg, cache_t* cache);
 
 /**
  * @brief Returns a string value representing the message. Note: need to free the returned string after use.
@@ -162,8 +164,9 @@ int compare_messages(message_t* msg1, message_t* msg2);
  * @brief
  *
  * @param id
+ * @param cache
  * @return message_t*
  */
-message_t* retrieve_msg(int id);
+message_t* retrieve_msg(int id, cache_t* cache);
 
 #endif  // MESSAGES_H
