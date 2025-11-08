@@ -26,9 +26,9 @@
  */
 int main() {
     PRINT_HEADER("create cache");
-    cache_t* cache = create_cache();
-    print_cache_metadata(cache);
-    print_cache_contents(cache);
+    cache_t* lifo_cache = create_cache(LIFO);
+    cache_t* random_cache = create_cache(RANDOM);
+    print_cache_contents(lifo_cache);
 
     // create objects and values for testing
     message_t* msg0 = disk_find(0);
@@ -41,45 +41,43 @@ int main() {
     replacement_strategy random = RANDOM;
 
     PRINT_HEADER("add 1st message to the cache");
-    bool status = cache_add(cache, msg0, lifo);
+    bool status = cache_add(lifo_cache, msg0);
     PRINT_TEST_RESULTS(status == true, "");
-    print_cache_metadata(cache);
-    print_cache_contents(cache);
+    print_cache_metadata(lifo_cache);
+    print_cache_contents(lifo_cache);
 
     PRINT_HEADER("add 2nd message to the cache");
-    status = cache_add(cache, msg1, lifo);
+    status = cache_add(lifo_cache, msg1);
     PRINT_TEST_RESULTS(status == true, "");
-    print_cache_metadata(cache);
-    print_cache_contents(cache);
+    print_cache_metadata(lifo_cache);
+    print_cache_contents(lifo_cache);
 
     PRINT_HEADER("add 3rd message to the cache should trigger a LIFO replacement");
-    status = cache_add(cache, msg2, lifo);
+    status = cache_add(lifo_cache, msg2);
     PRINT_TEST_RESULTS(status == true, "");
-    print_cache_metadata(cache);
-    print_cache_contents(cache);
-
+    print_cache_metadata(lifo_cache);
+    print_cache_contents(lifo_cache);
 
     PRINT_HEADER("try to find message in the cache");
-    message_t* actual_msg = create_msg_from_page(cache_find(cache, 2));
+    message_t* actual_msg = create_msg_from_page(cache_find(lifo_cache, 2));
     PRINT_COMPARE_MESSAGES(msg2, actual_msg);
 
     PRINT_HEADER("try to find message that isn't in the cache");
-    actual_msg = create_msg_from_page(cache_find(cache, 5));
+    actual_msg = create_msg_from_page(cache_find(lifo_cache, 5));
     PRINT_TEST_RESULTS(actual_msg == NULL, "");
 
-    
     // TEST - out-of-memory detection
     PRINT_HEADER("add 4th message to the cache should trigger a RANDOM replacement");
-    status = cache_add(cache, msg2, lifo);
+    status = cache_add(random_cache, msg2);
     PRINT_TEST_RESULTS(status == false, "");
-    print_cache_metadata(cache);
-    print_cache_contents(cache);
+    print_cache_metadata(random_cache);
+    print_cache_contents(random_cache);
 
     PRINT_HEADER("add 4th message to the cache should trigger a RANDOM replacement");
-    status = cache_add(cache, msg4, random);
+    status = cache_add(random_cache, msg4);
     PRINT_TEST_RESULTS(status == true, "");
-    print_cache_metadata(cache);
-    print_cache_contents(cache);
+    print_cache_metadata(random_cache);
+    print_cache_contents(random_cache);
 
     // TEST - out-of-disk detection
 
@@ -95,7 +93,8 @@ int main() {
     free_message(msg2);
     free_message(msg3);
     free_message(msg4);
-    free_cache(cache);
+    free_cache(lifo_cache);
+    free_cache(random_cache);
 
     return 0;
 }
