@@ -25,6 +25,12 @@ void PRINT_HEADER(char* str) {
     printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
 
+void DISPLAY_MESSAGE(message_t* msg) {
+    char* pretty_str = message_to_pretty_str(msg);
+    printf("%s\n", pretty_str);
+    free(pretty_str);
+}
+
 void PRINT_COMPARE_MESSAGES(message_t* expected_msg, message_t* actual_msg) {
     char* exp_msg_print = message_to_pretty_str(expected_msg);
     char* actual_msg_print = message_to_pretty_str(actual_msg);

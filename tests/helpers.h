@@ -24,6 +24,8 @@ void PRINT_COMPARISON(const char* expected, const char* actual);
  */
 void PRINT_COMPARE_MESSAGES(message_t* expected_msg, message_t* actual_msg);
 
+void DISPLAY_MESSAGE(message_t* msg);
+
 /**
  * @brief Prints a test section header with a given title
  *
