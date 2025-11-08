@@ -15,21 +15,8 @@
 #include "message.h"
 
 int main(int argc, char* argv[]) {
-    // test printing only
-    printf("cache size = %d messages\nmessage size = %d bytes\n", CACHE_SIZE, MAX_MESSAGE_SIZE);
+    // EVALUATION - LIFO
+    for (int i = 0; i <= 1000; i++) {
 
-    // initialize empty cache
-    // initialize empty AVL tree
-
-    // fill cache with...
-    //  existing messages retrieved from disk
-    //  new messages that also need to be stored on disk
-
-    // search cache for...
-    //  messages present in the cache
-    //  messages present only in the disk
-    //  messages present in neither cache nor disk
-
-    // test LIFO replacement
-    // test random replacement
+    }
 }
