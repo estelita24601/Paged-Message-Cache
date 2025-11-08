@@ -17,6 +17,9 @@
 #include <string.h>
 #include <time.h>
 
+#include "cache.h"
+#include "disk.h"
+
 static int NEXT_ID;
 
 /**
@@ -340,18 +343,80 @@ int compare_messages(message_t* msg1, message_t* msg2) {
 }
 
 /**
- * @brief store a message element to a message store on disk.
+ * @brief store a message element to the disk AND to the cache
+ * if this message already exists in either then that message is replaced with this one
  *
  * @param msg message_t* - pointer to the message element
- * @param filename char* - name of the file to store the message
- * @return int - status code (0 for success, -1 for failure)
+ * @param cache cache_t* - pointer to the cache we should store element inside of
+ * @return true on success
+ * @return false on failure
  */
-bool store_msg(message_t* msg) { return false; }
+bool store_msg(message_t* msg, cache_t* cache) {
+    if (msg == NULL) {
+        printf("WARNING: tried to store a NULL message object\n");
+        return false;
+    }
+
+    // try to write to the file no matter what
+    bool disk_success = disk_write(msg);
+
+    // only write to cache if it exists
+    bool cache_success;
+    if (cache == NULL) {
+        cache_success = false;
+    } else {
+        cache_success = cache_add(cache, msg, RANDOM);
+    }
+
+    if (cache_success && disk_success) {
+        return true;
+    } else {
+        if (cache_success == false && disk_success == false) {
+            printf("WARNING: unable to store message #%d in the cache or in the disk\n", msg->id);
+        } else if (cache_success) {
+            printf("WARNING: message #%d was stored to cache but NOT stored in the disk\n", msg->id);
+        } else {
+            printf("WARNING: message #%d was stored in the disk but NOT in the cache\n", msg->id);
+        }
+        return false;
+    }
+}
 
 /**
- * @brief
+ * @brief first searches the cache for a message with the given ID and then searches the disk store
+ * if message was not in the cache this function adds it to the cache
  *
- * @param id
- * @return message_t*
+ * @param id int - unique identifier for the message we want to retrieve
+ * @param cache cache_t* - pointer to cache we'll search for the message
+ * @return message_t* - message that we found
+ * @return NULL - if message couldn't be found in the cache OR in the disk store
  */
-message_t* retrieve_msg(int id) { return NULL; }
+message_t* retrieve_msg(int id, cache_t* cache) {
+    if (cache == NULL) {
+        printf("ERROR: tried to retrieve message from a NULL cache\n");
+        exit(1);
+    }
+
+    cache_page_t* cache_page = cache_find(cache, id);
+    if (cache_page != NULL) {
+        message_t* msg = create_msg_from_page(cache_page);
+        if (msg == NULL) {
+            printf("WARNING: found message in the cache but could not turn it into a message object\n");
+        }
+        return msg;
+    }
+
+    // implied else: message isn't in the cache but might be in the disk
+    message_t* msg = disk_find(id);
+
+    if (msg != NULL) {
+        // now need to add this to the cache
+        if (cache_add(msg) == true) {
+            return msg;
+        }
+        printf("ERROR: found message in the disk but wasn't able to add it to the cache\n");
+        exit(1);
+    }
+
+    return msg;  // aka return NULL
+}
