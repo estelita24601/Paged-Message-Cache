@@ -145,7 +145,7 @@ void test_msg_csv_roundtrip(message_t* original_msg) {
  * @return int - value for if successful or not
  */
 int main() {
-    // NOTE: need to be careful when running this - updates the _NEXT_ID.txt
+    // WARNING: need to be careful when running this - updates the _NEXT_ID.txt
     PRINT_HEADER("create_msg");
     PRINT_SUBHEADER("happy path");
     message_t* msg0 = create_msg("obi-wan", "grievous", "hello there");
