@@ -150,15 +150,6 @@ bool store_msg(message_t* msg, cache_t* cache);
 char* message_to_pretty_str(message_t* message);
 
 /**
- * @brief Compares two message structs based on message id
- *
- * @param msg1 the first message to compare
- * @param msg2 the second message to compare
- * @return -1 if the msg1 comes before msg2, 0 if they are equal, 1 if msg1 comes after msg2
- */
-// int compare_messages(message_t* msg1, message_t* msg2);
-
-/**
  * @brief first searches the cache for a message with the given ID and then searches the disk store
  * if message was not in the cache this function adds it to the cache
  *

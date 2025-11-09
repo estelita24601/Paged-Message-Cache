@@ -149,13 +149,14 @@ int main() {
     PRINT_SUBHEADER("NULL message object");
     test_msg_to_csv(NULL, NULL);
 
-    PRINT_HEADER("create_msg_from_str");
+    PRINT_HEADER("create_msg_from_str"); // TODO
 
 
+
+    PRINT_HEADER("store_msg"); // TODO
+
+    PRINT_HEADER("retrieve_msg"); // TODO
     
-    PRINT_HEADER("store_msg");
-
-    PRINT_SUBHEADER("happy path: store message for the first time");
 
     // TEST: test store message and next_id - commented out since don't want to always create a new message with the
     // same values but incremented id
