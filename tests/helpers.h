@@ -1,4 +1,16 @@
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "../src/message.h"
+
+
+/**
+ * @brief Prints a test failure message and increments the failure counter
+ */
+void PRINT_FAILURE();
 
 /**
  * @brief prints if a test was a success or failure
@@ -24,6 +36,11 @@ void PRINT_COMPARISON(const char* expected, const char* actual);
  */
 void PRINT_COMPARE_MESSAGES(message_t* expected_msg, message_t* actual_msg);
 
+/**
+ * @brief
+ *
+ * @param msg
+ */
 void DISPLAY_MESSAGE(message_t* msg);
 
 /**

@@ -8,6 +8,7 @@
 
 #include "../src/message.h"
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,6 +18,57 @@
 #include "../src/disk.h"
 #include "helpers.h"
 
+
+char* msg_to_str(message_t* msg) {
+    if (msg == NULL) {
+        return NULL;
+    }
+
+    // calculate length for csv string
+    int len = 0;
+
+    if (msg->id == 0) {
+        len += 1;
+    } else {
+        len += log10(msg->id) + 1;
+    }
+    len += strlen(msg->sender);
+    len += strlen(msg->receiver);
+    len += strlen(msg->content);
+    len += TIME_FORMAT_LEN;
+    len += 1;  // bool prints as one digit number 0 or 1
+    len += 5;  // 6 fields in msg object means 5 commas in csv
+    char* csv_str = malloc(sizeof(char) * (len + 1));
+
+    // turn time_t into formatted string
+    struct tm* tm = localtime(&msg->sent_time);
+    char time[TIME_FORMAT_LEN + 1];
+    strftime(time, TIME_FORMAT_LEN + 1, TIME_FORMAT, tm);
+
+    // NEW EXPECTED FORMAT: id,sender,receiver,time_sent,delivered_flag,content
+    sprintf(csv_str, "%d,%s,%s,%s,%d,%s", msg->id, msg->sender, msg->receiver, time, msg->sent_flag, msg->content);
+
+    return csv_str;
+}
+
+/**
+ * @brief Tests conversion of a message object to CSV string format
+ *
+ * @param msg_obj The message object to convert
+ * @param expected The expected CSV string output
+ */
+void test_msg_to_csv(message_t* msg_obj, char* expected) {
+    char* actual = msg_to_str(msg_obj);
+
+    if (expected == NULL) {
+        if (actual != NULL) {
+            PRINT_FAILURE();
+        }
+    }
+    PRINT_COMPARISON(expected, actual);
+    free(actual);
+}
+
 /**
  * @brief Main function for tests of multiprocess cipher programs to encrypt words.
  *
@@ -24,6 +76,87 @@
  * @return int - value for if successful or not
  */
 int main() {
+
+    PRINT_HEADER("create_msg");
+    PRINT_SUBHEADER("happy path");
+    message_t* msg0 = create_msg("obi-wan", "grievous", "hello there");
+    message_t* msg1 = create_msg("navi", "link", "hey listen!");
+
+    PRINT_SUBHEADER("allow messages with empty or null content");
+    message_t* msg2 = create_msg("link", "navi", "");
+    message_t* msg3 = create_msg("link", "zelda", NULL);
+
+    // instead of program crash just send back NULL object
+    PRINT_SUBHEADER("don't allow messages with empty or null sender");
+    message_t* msg_empty_sender = create_msg("", "recipient2", "content2");
+    assert(msg_empty_sender == NULL);
+    message_t* msg_null_sender = create_msg(NULL, "recipient2", "content2");
+    assert(msg_null_sender == NULL);
+
+    PRINT_SUBHEADER("don't allow messages with empty or null receiver");
+    message_t* msg_empty_receiver = create_msg("sender 3", "", "content3");
+    assert(msg_empty_receiver == NULL);
+    message_t* msg_null_receiver = create_msg("sender3", NULL, "content3");
+    assert(msg_null_receiver == NULL);
+
+    PRINT_SUBHEADER("don't allow messages with empty or null sender AND receiver");
+    message_t* msg_all_empty = create_msg("", "", "hello");
+    assert(msg_all_empty == NULL);
+    message_t* msg_all_null = create_msg(NULL, NULL, "hello");
+    assert(msg_all_null == NULL);
+
+    PRINT_HEADER("msg_compare");
+    PRINT_SUBHEADER("compare completely different objects");
+    PRINT_COMPARE_MESSAGES(msg0, msg1);
+    PRINT_SUBHEADER("compare exact same object");
+    PRINT_COMPARE_MESSAGES(msg0, msg0);
+
+    // should be similar enough to be considered "equal"
+    PRINT_SUBHEADER("compare separate objects with different ID and timestamp");
+    message_t* msg1_cpy = create_msg("obi-wan", "grievous", "hello there");
+    PRINT_COMPARE_MESSAGES(msg0, msg1_cpy);
+
+    
+    // now make sure theyre different enough to be unequal
+    PRINT_SUBHEADER("compare separate objects with different delivery status");
+    msg1_cpy->sent_flag = 1;
+    msg0->sent_flag = 0;
+    PRINT_COMPARE_MESSAGES(msg0, msg1_cpy);
+
+    // should just return false instead of crashing
+    PRINT_SUBHEADER("comparison with NULL objects");
+    PRINT_COMPARE_MESSAGES(msg0, NULL);
+    PRINT_COMPARE_MESSAGES(NULL, msg1);
+    PRINT_COMPARE_MESSAGES(NULL, NULL);
+
+    PRINT_HEADER("msg_to_str");
+    // NEW EXPECTED FORMAT: id,sender,receiver,time_sent,delivered_flag,content
+    // TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+    // "YYYY-mm-dd HH:MM:SS"
+
+    PRINT_SUBHEADER("happy path test I");
+    test_msg_to_csv(msg0, "0,obi-wan,grievous,YYYY-mm-dd HH:MM:SS,0,hello there");
+
+    PRINT_SUBHEADER("happy path test II");
+    test_msg_to_csv(msg1, "1,navi,link,YYYY-mm-dd HH:MM:SS,0,hey listen!");
+
+    PRINT_SUBHEADER("message with no content I");
+    test_msg_to_csv(msg2, "2,link,navi,YYYY-mm-dd HH:MM:SS,0,N/A");
+
+    PRINT_SUBHEADER("message with no content II");
+    test_msg_to_csv(msg3, "3,link,zelda,YYYY-mm-dd HH:MM:SS,0,N/A");
+
+    PRINT_SUBHEADER("NULL message object");
+    test_msg_to_csv(NULL, NULL);
+
+    PRINT_HEADER("create_msg_from_str");
+
+
+    
+    PRINT_HEADER("store_msg");
+
+    PRINT_SUBHEADER("happy path: store message for the first time");
+
     // TEST: test store message and next_id - commented out since don't want to always create a new message with the
     // same values but incremented id
     /*
@@ -51,12 +184,21 @@ int main() {
     */
 
     // TEST: test retrieve_msg & message_to_pretty_str
+    /*
     message_t* msg1 = disk_find(1);
     char* pretty_msg1 = message_to_pretty_str(msg1);
     printf("Msg1 Check: %s", pretty_msg1);
 
     free_message(msg1);
     free(pretty_msg1);
+    */
+    
+    // free_msg(msg4);
+    free_message(msg1_cpy);
+    free_message(msg3);
+    free_message(msg2);
+    free_message(msg1);
+    free_message(msg0);
 
     return 0;
 }

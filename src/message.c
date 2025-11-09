@@ -319,6 +319,10 @@ char* msg_to_csv(message_t* msg) {
  * @return a string representation of the message
  */
 char* message_to_pretty_str(message_t* message) {
+    if (message == NULL) {
+        return NULL;
+    }
+    
     char* str = (char*) malloc(MAX_CSV_LENGTH * sizeof(char));
     if (str == NULL) {
         fprintf(stderr, "ERROR: dynamic memory was not able to be allocated");

@@ -1,10 +1,15 @@
 #include "helpers.h"
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+
+int NUM_FAILURES = 0;
+
+/**
+ * @brief Prints a test failure message and increments the failure counter
+ */
+void PRINT_FAILURE() {
+    printf("---- FAILED TEST\n");
+    NUM_FAILURES++;
+}
 
 void PRINT_TEST_RESULTS(bool result, char* message) {
     if (result) {
@@ -35,7 +40,7 @@ void PRINT_COMPARE_MESSAGES(message_t* expected_msg, message_t* actual_msg) {
     char* exp_msg_print = message_to_pretty_str(expected_msg);
     char* actual_msg_print = message_to_pretty_str(actual_msg);
 
-    if (strcmp(exp_msg_print, actual_msg_print) != 0) {
+    if (exp_msg_print == NULL || actual_msg_print == NULL || strcmp(exp_msg_print, actual_msg_print) != 0) {
         printf("FAIL:\n");
     } else {
         printf("PASS:\n");

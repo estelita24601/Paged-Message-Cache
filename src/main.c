@@ -25,8 +25,10 @@ void cache_evaluate(cache_t* cache) {
 
     // fill cache in initial phase
     // EVALUATION - LIFO
+    message_t* msg = NULL;
     for (int i = 0; i < cache->total_pages; i++) { // looping through with a check dependant on the cache runs an infinite loop
-        retrieve_msg(i, cache);
+        msg = retrieve_msg(i, cache);
+        free_message(msg);
     }
 
     // EVALUATION - choosing random index to be requested
@@ -37,7 +39,8 @@ void cache_evaluate(cache_t* cache) {
         }
 
         // printf("%d\n", random_index);
-        retrieve_msg(random_index, cache);
+        msg = retrieve_msg(random_index, cache);
+        free_message(msg);
     }
     printf("Cache Hts: %d\n", cache->hits);
     printf("Cache Miss: %d\n", cache->miss);
@@ -54,5 +57,9 @@ int main(int argc, char* argv[]) {
     cache_evaluate(lifo_cache);
 
     cache_evaluate(random_cache);
+
+    free_cache(lifo_cache);
+    free_cache(random_cache);
+    
     
 }
