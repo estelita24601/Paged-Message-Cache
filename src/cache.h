@@ -18,6 +18,7 @@
 #include "config.h"
 
 
+
 typedef enum { LIFO, RANDOM } replacement_strategy;
 
 /**

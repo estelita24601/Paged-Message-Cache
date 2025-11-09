@@ -30,8 +30,6 @@ void cache_evaluate(cache_t* cache) {
     }
 
     // EVALUATION - choosing random index to be requested
-    
-    srand(time(NULL));  // Seed with current time
     int random_index = -1;
     for (int i = 0; i < 1000; i++) {
         if (next_id > -1) {
@@ -48,6 +46,8 @@ void cache_evaluate(cache_t* cache) {
 
 int main(int argc, char* argv[]) {
 
+    srand(time(NULL));  // Seed with current time
+    
     cache_t* lifo_cache = create_cache(LIFO);
     cache_t* random_cache = create_cache(RANDOM);
 

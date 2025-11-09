@@ -77,7 +77,6 @@ bool cache_add(cache_t* cache, message_t* msg) {
                 page_to_replace = cache->page_array[cache->last_added];
                 return replace_page(page_to_replace, msg);
             case RANDOM:
-                srand(time(NULL));  // Seed with current time
                 int random_index = rand() % cache->total_pages;
                 page_to_replace = cache->page_array[random_index];
                 return replace_page(page_to_replace, msg);
@@ -151,7 +150,7 @@ void free_cache(cache_t* cache) {
  */
 void print_cache_metadata(cache_t* cache) {
     if (cache == NULL) {
-        printf("WARNING: trying to print a cache that doesn't exist\n");
+        printf("WARNING: trying to print a metadata of a cache that doesn't exist\n");
         return;
     }
     printf("Total Pages = %d\n", cache->total_pages);
@@ -169,7 +168,7 @@ void print_cache_metadata(cache_t* cache) {
  */
 void print_cache_contents(cache_t* cache) {
     if (cache == NULL) {
-        printf("WARNING: trying to print a cache that doesn't exist\n");
+        printf("WARNING: trying to print contents of a cache that doesn't exist\n");
         return;
     }
 
@@ -331,7 +330,7 @@ message_t* create_msg_from_page(const cache_page_t* page) {
  */
 void print_page(cache_page_t* page) {
     if (page == NULL) {
-        printf("WARNING: trying to print page that doesn't exist\n");
+        printf("WARNING: trying to print contents of a page that doesn't exist\n");
         return;
     }
 
@@ -356,7 +355,7 @@ void print_page(cache_page_t* page) {
  */
 void print_page_metadata(cache_page_t* page) {
     if (page == NULL) {
-        printf("WARNING: trying to print page that doesn't exist\n");
+        printf("WARNING: trying to print metadata of a page that doesn't exist\n");
         return;
     }
     if (page->occupied) {
