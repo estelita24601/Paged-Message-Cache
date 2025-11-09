@@ -27,13 +27,11 @@
 int main() {
 
     PRINT_HEADER("create cache");
-    cache_t* null_cache = NULL;
     cache_t* lifo_cache = create_cache(LIFO);
     cache_t* random_cache = create_cache(RANDOM);
     print_cache_contents(lifo_cache);
 
     // create objects and values for testing
-    message_t* null_msg = NULL;
     message_t* msg0 = disk_find(0);
     message_t* msg1 = disk_find(1);
     message_t* msg2 = disk_find(2);
@@ -65,11 +63,6 @@ int main() {
     message_t* actual_msg = create_msg_from_page(page);
     PRINT_COMPARE_MESSAGES(msg2, actual_msg);
 
-    PRINT_HEADER("print page metadata");
-    print_page_metadata(page);
-    PRINT_HEADER("print page contents");
-    print_page(page);
-
     free_message(actual_msg);
 
     PRINT_HEADER("try to find message that isn't in the cache");
@@ -79,7 +72,7 @@ int main() {
 
     // TEST - (edge case) add a NULL msg and invalid id to cache_find(..)
     PRINT_HEADER("try to find message in a cache that doesn't exist");
-    page = cache_find(null_cache, 2);
+    page = cache_find(NULL, 2);
     PRINT_TEST_RESULTS(page == NULL, "");
 
     PRINT_HEADER("try to find message with an invalid id");
@@ -128,34 +121,22 @@ int main() {
 
     // TEST - (edge case) add a NULL message to the cache
     PRINT_HEADER("add empty message to the RANDOM cache");
-    status = cache_add(random_cache, null_msg);
-    PRINT_TEST_RESULTS(status == false, "");
-    print_cache_metadata(random_cache);
-    print_cache_contents(random_cache);
+    status = cache_add(random_cache, NULL);
+    PRINT_TEST_RESULTS(status == false, "expected false return if message is NULL");
 
     // TEST - (edge case) add a msg1 to a NULL cache
     PRINT_HEADER("add 1st message to a non-exist cache");
-    status = cache_add(null_cache, msg1);
-    PRINT_TEST_RESULTS(status == false, "");
-    print_cache_metadata(random_cache);
-    print_cache_contents(random_cache);
+    status = cache_add(NULL, msg1);
+    PRINT_TEST_RESULTS(status == false, "expected false return if cache is NULL");
 
     // TEST - out-of-disk detection
 
     // TEST - other
     PRINT_HEADER("check what happens when printing a NULL cache");
     printf("\n");
-    print_cache_metadata(null_cache);
+    print_cache_metadata(NULL);
     printf("\n");
-    print_cache_contents(null_cache);
-    printf("\n");
-
-    PRINT_HEADER("check what happens when printing a NULL page");
-    cache_page_t* null_page = NULL;
-    printf("\n");
-    print_page_metadata(null_page);
-    printf("\n");
-    print_page(null_page);
+    print_cache_contents(NULL);
     printf("\n");
 
 

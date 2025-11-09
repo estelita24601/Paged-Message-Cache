@@ -17,22 +17,26 @@ int main() {
 
     PRINT_HEADER("init empty page");
     cache_page_t* page1 = init_page();
+    print_page_metadata(page1);
     print_page(page1);
 
     PRINT_HEADER("load message into page");
     message_t* msg1 = create_msg_from_str("0,obi-wan,grievous,2025-10-31 20:40:55,0,hello there");
     actual = set_page(page1, msg1);
+    print_page_metadata(page1);
     print_page(page1);
     PRINT_TEST_RESULTS(actual == true, "");
 
     PRINT_HEADER("clear message from the page");
     actual = clear_page(page1);
+    print_page_metadata(page1);
     print_page(page1);
     PRINT_TEST_RESULTS(actual == true, "");
 
     PRINT_HEADER("load message into page again");
     message_t* msg2 = create_msg_from_str("2,alexander,angelica,2025-10-31 21:40:55,0,my dearest, angelica");
     actual = set_page(page1, msg2);
+    print_page_metadata(page1);
     print_page(page1);
     PRINT_TEST_RESULTS(actual == true, "");
 
@@ -54,16 +58,30 @@ int main() {
     message_t* actual_msg = create_msg_from_page(page1);
     PRINT_COMPARE_MESSAGES(msg1, actual_msg);
 
+    free_message(actual_msg);
+
     PRINT_HEADER("edge case of try to create message from empty page");
     clear_page(page1);
     actual_msg = create_msg_from_page(page1);
     PRINT_TEST_RESULTS(actual_msg == NULL, "expected NULL return if page is empty");
 
+    free_message(actual_msg);
+
     PRINT_HEADER("edge case of trying to create message from a NULL page");
     actual_msg = create_msg_from_page(NULL);
     PRINT_TEST_RESULTS(actual_msg == NULL, "expected NULL return if page is NULL");
 
-    free_message(msg1);
+    // TEST - (edge case) printing NULL page
+    PRINT_HEADER("check what happens when printing a NULL page");
+    printf("\n");
+    print_page_metadata(NULL);
+    printf("\n");
+    print_page(NULL);
+    printf("\n");
+
+
+    free_message(actual_msg);
     free_message(msg2);
+    free_message(msg1);
     free(page1);
 }
