@@ -65,7 +65,6 @@ int main() {
     message_t* actual_msg = create_msg_from_page(page);
     PRINT_COMPARE_MESSAGES(msg2, actual_msg);
 
-    
     PRINT_HEADER("print page metadata");
     print_page_metadata(page);
     PRINT_HEADER("print page contents");
@@ -128,16 +127,18 @@ int main() {
     print_cache_contents(random_cache);
 
     // TEST - (edge case) add a NULL message to the cache
-    PRINT_HEADER("add 6th message to the RANDOM cache should trigger a RANDOM replacement");
+    PRINT_HEADER("add empty message to the RANDOM cache");
     status = cache_add(random_cache, null_msg);
     PRINT_TEST_RESULTS(status == false, "");
     print_cache_metadata(random_cache);
     print_cache_contents(random_cache);
 
-    // TEST - (edge case) add a NULL cache to the cache
+    // TEST - (edge case) add a msg1 to a NULL cache
     PRINT_HEADER("add 1st message to a non-exist cache");
-    print_page(page);
-
+    status = cache_add(null_cache, msg1);
+    PRINT_TEST_RESULTS(status == false, "");
+    print_cache_metadata(random_cache);
+    print_cache_contents(random_cache);
 
     // TEST - out-of-disk detection
 
