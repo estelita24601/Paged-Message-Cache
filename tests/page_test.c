@@ -17,26 +17,22 @@ int main() {
 
     PRINT_HEADER("init empty page");
     cache_page_t* page1 = init_page();
-    print_page_metadata(page1);
     print_page(page1);
 
     PRINT_HEADER("load message into page");
     message_t* msg1 = create_msg_from_str("0,obi-wan,grievous,2025-10-31 20:40:55,0,hello there");
     actual = set_page(page1, msg1);
-    print_page_metadata(page1);
     print_page(page1);
     PRINT_TEST_RESULTS(actual == true, "");
 
     PRINT_HEADER("clear message from the page");
     actual = clear_page(page1);
-    print_page_metadata(page1);
     print_page(page1);
     PRINT_TEST_RESULTS(actual == true, "");
 
     PRINT_HEADER("load message into page again");
     message_t* msg2 = create_msg_from_str("2,alexander,angelica,2025-10-31 21:40:55,0,my dearest, angelica");
     actual = set_page(page1, msg2);
-    print_page_metadata(page1);
     print_page(page1);
     PRINT_TEST_RESULTS(actual == true, "");
 

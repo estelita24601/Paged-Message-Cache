@@ -347,6 +347,11 @@ char* message_to_pretty_str(message_t* message) {
  * @return false on failure
  */
 bool store_msg(message_t* msg, cache_t* cache) {
+    if (cache == NULL) {
+        printf("WARNING: tried to store a message to a cache that does not exist\n");
+        return false;
+    }
+    
     if (msg == NULL) {
         printf("WARNING: tried to store a NULL message object\n");
         return false;
@@ -390,6 +395,11 @@ message_t* retrieve_msg(int id, cache_t* cache) {
     if (cache == NULL) {
         printf("ERROR: tried to retrieve message from a NULL cache\n");
         exit(1);
+    }
+
+    if (id < 0) {
+        printf("WARNING: cannot find page, invalid id\n");
+        return NULL;
     }
 
     cache_page_t* cache_page = cache_find(cache, id);

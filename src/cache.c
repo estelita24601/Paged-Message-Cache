@@ -359,9 +359,9 @@ void print_page_metadata(cache_page_t* page) {
         return;
     }
     if (page->occupied) {
-        printf("{msg_id: %d}\n", page->id);
+        printf("{msg_id: %d}", page->id);
     } else {
-        printf("{msg_id: NaN}\n");
+        printf("{msg_id: NaN}");
     }
 }
 

@@ -45,10 +45,32 @@ char* msg_to_str(message_t* msg) {
     char time[TIME_FORMAT_LEN + 1];
     strftime(time, TIME_FORMAT_LEN + 1, TIME_FORMAT, tm);
 
-    // NEW EXPECTED FORMAT: id,sender,receiver,time_sent,delivered_flag,content
+    // NEW EXPECTED FORMAT: id,sender,receiver,time_sent,sent_flag,content
     sprintf(csv_str, "%d,%s,%s,%s,%d,%s", msg->id, msg->sender, msg->receiver, time, msg->sent_flag, msg->content);
 
     return csv_str;
+}
+
+bool msg_compare(message_t* msgA, message_t* msgB) {
+    // first do null checks
+    if (msgA == NULL || msgB == NULL) {
+        return false;
+    }
+
+    if (strcmp(msgA->sender, msgB->sender) != 0) {
+        return false;
+    }
+    if (strcmp(msgA->receiver, msgB->receiver) != 0) {
+        return false;
+    }
+    if (strcmp(msgA->content, msgB->content) != 0) {
+        return false;
+    }
+    if (msgA->sent_flag != msgB->sent_flag) {
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -70,13 +92,60 @@ void test_msg_to_csv(message_t* msg_obj, char* expected) {
 }
 
 /**
+ * @brief Tests creation of a message object from a CSV string
+ *
+ * @param csv_str The CSV string to parse
+ * @param expected The expected message object (NULL for invalid inputs)
+ */
+void test_csv_to_msg(char* csv_str, message_t* expected) {
+    message_t* actual = create_msg_from_str(csv_str);
+
+    if (actual == NULL && expected != NULL) {
+        PRINT_FAILURE();
+    }
+
+    char* actual_string = msg_to_str(actual);
+    char* expected_string = msg_to_str(expected);
+    PRINT_COMPARISON(expected_string, actual_string);
+
+    if (actual_string) free(actual_string);
+    if (expected_string) free(expected_string);
+
+    free_message(actual);
+}
+
+/**
+ * @brief Tests roundtrip conversion: message -> CSV -> message
+ *
+ * Converts a message to CSV format and back, verifying that the
+ * resulting message matches the original.
+ *
+ * @param original_msg The message to test roundtrip conversion
+ */
+void test_msg_csv_roundtrip(message_t* original_msg) {
+    char* original_string = msg_to_str(original_msg);
+
+    message_t* translated_msg = create_msg_from_str(original_string);
+
+    if (msg_compare(original_msg, translated_msg) != true) {
+        PRINT_FAILURE();
+        char* translated_string = msg_to_str(translated_msg);
+        PRINT_COMPARISON(original_string, translated_string);
+        free(translated_string);
+    }
+
+    free(original_string);
+    free_message(translated_msg);
+}
+
+/**
  * @brief Main function for tests of multiprocess cipher programs to encrypt words.
  *
  * @param void - no parameters
  * @return int - value for if successful or not
  */
 int main() {
-
+    // NOTE: need to be careful when running this - updates the _NEXT_ID.txt
     PRINT_HEADER("create_msg");
     PRINT_SUBHEADER("happy path");
     message_t* msg0 = create_msg("obi-wan", "grievous", "hello there");
@@ -130,7 +199,7 @@ int main() {
     PRINT_COMPARE_MESSAGES(NULL, NULL);
 
     PRINT_HEADER("msg_to_str");
-    // NEW EXPECTED FORMAT: id,sender,receiver,time_sent,delivered_flag,content
+    // NEW EXPECTED FORMAT: id,sender,receiver,time_sent,sent_flag,content
     // TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
     // "YYYY-mm-dd HH:MM:SS"
 
@@ -149,52 +218,52 @@ int main() {
     PRINT_SUBHEADER("NULL message object");
     test_msg_to_csv(NULL, NULL);
 
-    PRINT_HEADER("create_msg_from_str"); // TODO
+    PRINT_HEADER("create_msg_from_str");
+    PRINT_SUBHEADER("happy path I");
+    test_msg_csv_roundtrip(msg0);
+
+    PRINT_SUBHEADER("happy path II");
+    test_msg_csv_roundtrip(msg1);
+
+    PRINT_SUBHEADER("no content");
+    test_msg_csv_roundtrip(msg2);
+
+    PRINT_SUBHEADER("commas in the message content");
+    message_t* msg4 = create_msg("alexander", "angelica", "my dearest, angelica");
+    test_msg_csv_roundtrip(msg4);
+
+    // empty sender
+    char* test_case = "3,,receiver,2025-10-26 19:20:49,0,content";
+    PRINT_SUBHEADER(test_case);
+    test_csv_to_msg(test_case, NULL);
+
+    // empty receiver
+    test_case = "4,sender,,2025-10-26 19:20:49,0,content";
+    PRINT_SUBHEADER(test_case);
+    test_csv_to_msg(test_case, NULL);
+
+    // empty sender and receiver
+    test_case = "5,,,2025-10-26 19:20:49,0,";
+    PRINT_SUBHEADER(test_case);
+    test_csv_to_msg(test_case, NULL);
+
+    // empty everything except id number and delivered flag
+    test_case = "6,,,,0,";
+    PRINT_SUBHEADER(test_case);
+    test_csv_to_msg(test_case, NULL);
+
+    // empty id number
+    test_case = ",sender,receiver,2025-10-26 19:20:49,0,content";
+    PRINT_SUBHEADER(test_case);
+    test_csv_to_msg(test_case, NULL);
+
+    PRINT_HEADER("store_msg"); // TODO - put this in cache_test.c
 
 
-
-    PRINT_HEADER("store_msg"); // TODO
-
-    PRINT_HEADER("retrieve_msg"); // TODO
+    PRINT_HEADER("retrieve_msg"); // TODO - put this in cache_test.c
     
-
-    // TEST: test store message and next_id - commented out since don't want to always create a new message with the
-    // same values but incremented id
-    /*
-    char* s = "John Vargas";
-    char* r = "Mary Jane";
-    char* c = "Hi, is the budget report ready?";
-    int id_check = 0;
-    message_t* msg = create_msg(s, r, c);
-    char* pretty_msg = message_to_pretty_str(msg);
-    // get ID from the file
-    FILE* id_file = fopen(NEXT_ID_PATH, "r");
-    if (id_file) {
-        fscanf(id_file, "%d", &id_check);
-        fclose(id_file);
-    } else {
-        NEXT_ID = 0;  // initialize first id number
-    }
-
-    // check msg id against file next id - 1
-    print_test_results(msg->id == id_check - 1, "store_msg() and get_next_id() functions");
-
-    store_msg(msg);
-    free_message(msg);
-    free(pretty_msg);
-    */
-
-    // TEST: test retrieve_msg & message_to_pretty_str
-    /*
-    message_t* msg1 = disk_find(1);
-    char* pretty_msg1 = message_to_pretty_str(msg1);
-    printf("Msg1 Check: %s", pretty_msg1);
-
-    free_message(msg1);
-    free(pretty_msg1);
-    */
     
-    // free_msg(msg4);
+    free_message(msg4);
     free_message(msg1_cpy);
     free_message(msg3);
     free_message(msg2);

@@ -21,6 +21,11 @@
  * @param cache cache_t* - either LIFO or RANDOM strategy set cache
  */
 void cache_evaluate(cache_t* cache) {
+    if (cache == NULL) {
+        printf("WARNING: trying to print contents of a cache that doesn't exist\n");
+        return;
+    }
+    
     int next_id = get_next_id();
 
     // fill cache in initial phase
