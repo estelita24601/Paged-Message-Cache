@@ -7,7 +7,24 @@
  */
 
 #include "cache.h"
+
 #include "message.h"
+
+#ifndef VERBOSE
+#define VERBOSE false
+#endif
+
+void PRINT_VERBOSE(char* str) {
+    if (VERBOSE == true) {
+        printf("%s\n", str);
+    }
+}
+
+void PRINT_VERBOSE_NUM(char* format_str, int num) {
+    if (VERBOSE == true) {
+        printf(format_str, num);
+    }
+}
 
 /**
  * @brief Create and initialize a cache object on the heap where its members are contiguous blocks of memory.
@@ -75,10 +92,12 @@ bool cache_add(cache_t* cache, message_t* msg) {
         switch (cache->strategy) {
             case LIFO:
                 page_to_replace = cache->page_array[cache->last_added];
+                PRINT_VERBOSE_NUM("LIFO replacement of page #%d\n", page_to_replace->id);
                 return replace_page(page_to_replace, msg);
             case RANDOM:
                 int random_index = rand() % cache->total_pages;
                 page_to_replace = cache->page_array[random_index];
+                PRINT_VERBOSE_NUM("RANDOM replacement of page #%d\n", page_to_replace->id);
                 return replace_page(page_to_replace, msg);
             default:
                 printf("ERROR: cache does not have a replacement strategy\n");
