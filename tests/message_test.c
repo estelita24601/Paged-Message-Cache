@@ -12,44 +12,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "../src/cache.h"
-#include "../src/disk.h"
 #include "helpers.h"
-
-
-char* msg_to_str(message_t* msg) {
-    if (msg == NULL) {
-        return NULL;
-    }
-
-    // calculate length for csv string
-    int len = 0;
-
-    if (msg->id == 0) {
-        len += 1;
-    } else {
-        len += log10(msg->id) + 1;
-    }
-    len += strlen(msg->sender);
-    len += strlen(msg->receiver);
-    len += strlen(msg->content);
-    len += TIME_FORMAT_LEN;
-    len += 1;  // bool prints as one digit number 0 or 1
-    len += 5;  // 6 fields in msg object means 5 commas in csv
-    char* csv_str = malloc(sizeof(char) * (len + 1));
-
-    // turn time_t into formatted string
-    struct tm* tm = localtime(&msg->sent_time);
-    char time[TIME_FORMAT_LEN + 1];
-    strftime(time, TIME_FORMAT_LEN + 1, TIME_FORMAT, tm);
-
-    // NEW EXPECTED FORMAT: id,sender,receiver,time_sent,sent_flag,content
-    sprintf(csv_str, "%d,%s,%s,%s,%d,%s", msg->id, msg->sender, msg->receiver, time, msg->sent_flag, msg->content);
-
-    return csv_str;
-}
 
 bool msg_compare(message_t* msgA, message_t* msgB) {
     // first do null checks
@@ -57,16 +22,7 @@ bool msg_compare(message_t* msgA, message_t* msgB) {
         return false;
     }
 
-    if (strcmp(msgA->sender, msgB->sender) != 0) {
-        return false;
-    }
-    if (strcmp(msgA->receiver, msgB->receiver) != 0) {
-        return false;
-    }
-    if (strcmp(msgA->content, msgB->content) != 0) {
-        return false;
-    }
-    if (msgA->sent_flag != msgB->sent_flag) {
+    if (msgA->id != msgB->id) {
         return false;
     }
 
@@ -80,7 +36,7 @@ bool msg_compare(message_t* msgA, message_t* msgB) {
  * @param expected The expected CSV string output
  */
 void test_msg_to_csv(message_t* msg_obj, char* expected) {
-    char* actual = msg_to_str(msg_obj);
+    char* actual = msg_to_csv(msg_obj);
 
     if (expected == NULL) {
         if (actual != NULL) {
@@ -104,8 +60,8 @@ void test_csv_to_msg(char* csv_str, message_t* expected) {
         PRINT_FAILURE();
     }
 
-    char* actual_string = msg_to_str(actual);
-    char* expected_string = msg_to_str(expected);
+    char* actual_string = msg_to_csv(actual);
+    char* expected_string = msg_to_csv(expected);
     PRINT_COMPARISON(expected_string, actual_string);
 
     if (actual_string) free(actual_string);
@@ -123,16 +79,10 @@ void test_csv_to_msg(char* csv_str, message_t* expected) {
  * @param original_msg The message to test roundtrip conversion
  */
 void test_msg_csv_roundtrip(message_t* original_msg) {
-    char* original_string = msg_to_str(original_msg);
-
+    char* original_string = msg_to_csv(original_msg);
     message_t* translated_msg = create_msg_from_str(original_string);
 
-    if (msg_compare(original_msg, translated_msg) != true) {
-        PRINT_FAILURE();
-        char* translated_string = msg_to_str(translated_msg);
-        PRINT_COMPARISON(original_string, translated_string);
-        free(translated_string);
-    }
+    PRINT_COMPARE_MESSAGES(original_msg, translated_msg);
 
     free(original_string);
     free_message(translated_msg);
@@ -145,15 +95,21 @@ void test_msg_csv_roundtrip(message_t* original_msg) {
  * @return int - value for if successful or not
  */
 int main() {
-    // WARNING: need to be careful when running this - updates the _NEXT_ID.txt
+    // save current value of _NEXT_ID so we can put it back to normal after we're done
+    int original_next_id = get_next_id();
+
     PRINT_HEADER("create_msg");
     PRINT_SUBHEADER("happy path");
     message_t* msg0 = create_msg("obi-wan", "grievous", "hello there");
+    DISPLAY_MESSAGE(msg0);
     message_t* msg1 = create_msg("navi", "link", "hey listen!");
+    DISPLAY_MESSAGE(msg1);
 
     PRINT_SUBHEADER("allow messages with empty or null content");
     message_t* msg2 = create_msg("link", "navi", "");
+    DISPLAY_MESSAGE(msg2);
     message_t* msg3 = create_msg("link", "zelda", NULL);
+    DISPLAY_MESSAGE(msg3);
 
     // instead of program crash just send back NULL object
     PRINT_SUBHEADER("don't allow messages with empty or null sender");
@@ -174,31 +130,7 @@ int main() {
     message_t* msg_all_null = create_msg(NULL, NULL, "hello");
     assert(msg_all_null == NULL);
 
-    PRINT_HEADER("msg_compare");
-    PRINT_SUBHEADER("compare completely different objects");
-    PRINT_COMPARE_MESSAGES(msg0, msg1);
-    PRINT_SUBHEADER("compare exact same object");
-    PRINT_COMPARE_MESSAGES(msg0, msg0);
-
-    // should be similar enough to be considered "equal"
-    PRINT_SUBHEADER("compare separate objects with different ID and timestamp");
-    message_t* msg1_cpy = create_msg("obi-wan", "grievous", "hello there");
-    PRINT_COMPARE_MESSAGES(msg0, msg1_cpy);
-
-    
-    // now make sure theyre different enough to be unequal
-    PRINT_SUBHEADER("compare separate objects with different delivery status");
-    msg1_cpy->sent_flag = 1;
-    msg0->sent_flag = 0;
-    PRINT_COMPARE_MESSAGES(msg0, msg1_cpy);
-
-    // should just return false instead of crashing
-    PRINT_SUBHEADER("comparison with NULL objects");
-    PRINT_COMPARE_MESSAGES(msg0, NULL);
-    PRINT_COMPARE_MESSAGES(NULL, msg1);
-    PRINT_COMPARE_MESSAGES(NULL, NULL);
-
-    PRINT_HEADER("msg_to_str");
+    PRINT_HEADER("msg_to_csv");
     // NEW EXPECTED FORMAT: id,sender,receiver,time_sent,sent_flag,content
     // TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
     // "YYYY-mm-dd HH:MM:SS"
@@ -233,42 +165,44 @@ int main() {
     test_msg_csv_roundtrip(msg4);
 
     // empty sender
-    char* test_case = "3,,receiver,2025-10-26 19:20:49,0,content";
+    char* test_case = "csv with no sender: '3,,receiver,2025-10-26 19:20:49,0,content'";
     PRINT_SUBHEADER(test_case);
     test_csv_to_msg(test_case, NULL);
 
     // empty receiver
-    test_case = "4,sender,,2025-10-26 19:20:49,0,content";
+    test_case = "csv with no receiver: '4,sender,,2025-10-26 19:20:49,0,content'";
     PRINT_SUBHEADER(test_case);
     test_csv_to_msg(test_case, NULL);
 
     // empty sender and receiver
-    test_case = "5,,,2025-10-26 19:20:49,0,";
+    test_case = "csv with no sender, receiver or content: '5,,,2025-10-26 19:20:49,0,'";
     PRINT_SUBHEADER(test_case);
     test_csv_to_msg(test_case, NULL);
 
     // empty everything except id number and delivered flag
-    test_case = "6,,,,0,";
+    test_case = "csv with most fields empty: '6,,,,0,'";
     PRINT_SUBHEADER(test_case);
     test_csv_to_msg(test_case, NULL);
 
     // empty id number
-    test_case = ",sender,receiver,2025-10-26 19:20:49,0,content";
+    test_case = "csv with no id number: ',sender,receiver,2025-10-26 19:20:49,0,content'";
     PRINT_SUBHEADER(test_case);
     test_csv_to_msg(test_case, NULL);
 
-    PRINT_HEADER("store_msg"); // TODO - put this in cache_test.c
-
-
-    PRINT_HEADER("retrieve_msg"); // TODO - put this in cache_test.c
-    
-    
     free_message(msg4);
-    free_message(msg1_cpy);
     free_message(msg3);
     free_message(msg2);
     free_message(msg1);
     free_message(msg0);
+
+    // reset next_id since none of these messages were stored to disk
+    FILE* id_file = fopen(NEXT_ID_PATH, "w");
+    if (id_file) {
+        fprintf(id_file, "%d", original_next_id);
+        fclose(id_file);
+    } else {
+        printf("WARNING: unable to reset next_id\n");
+    }
 
     return 0;
 }

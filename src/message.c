@@ -10,15 +10,10 @@
 
 #include "message.h"
 
-
 // static int NEXT_ID;
 
-
 /**
- * @brief Gets the next available message ID and updates the counter
- *
- * Reads the current ID from a file, increments it, saves it back,
- * and returns the original value.
+ * @brief Gets the next available message ID from the file
  *
  * @return int The next available message ID
  */
@@ -30,7 +25,7 @@ int get_next_id() {
         fscanf(id_file, "%d", &next_id);
         fclose(id_file);
     } else {
-        next_id = 0;  // initialize first id number
+        next_id = 1;  // initialize first id number
     }
 
     return next_id;
@@ -68,6 +63,11 @@ void update_next_id() {
  */
 message_t* create_msg_from_parts(int id, const char* sender, const char* receiver, const char* content,
                                  const time_t time_sent, bool sent_flag) {
+    // make sure id number is valid
+    if (id <= 0) {
+        return NULL;
+    }
+
     // first do null checks
     if (sender == NULL || receiver == NULL) {
         return NULL;
@@ -322,7 +322,7 @@ char* message_to_pretty_str(message_t* message) {
     if (message == NULL) {
         return NULL;
     }
-    
+
     char* str = (char*) malloc(MAX_CSV_LENGTH * sizeof(char));
     if (str == NULL) {
         fprintf(stderr, "ERROR: dynamic memory was not able to be allocated");
@@ -351,7 +351,7 @@ bool store_msg(message_t* msg, cache_t* cache) {
         printf("WARNING: tried to store a message to a cache that does not exist\n");
         return false;
     }
-    
+
     if (msg == NULL) {
         printf("WARNING: tried to store a NULL message object\n");
         return false;
