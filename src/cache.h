@@ -19,15 +19,17 @@
 
 /*
 Explanation and Reasoning of Strategy and Design:
-We decided to use an array data structure and the struct type defintion for our cache strategy and design because the array structure
+We decided to use an array data structure and the struct type defintion for our cache strategy and design because the array
 allows us to do a linear search to access the cache with a speed of O(1) for the replacement policy while the struct provides contiguous
-blocks of memory in which memory tracking of the cache is assumed through its contiguous nature.Initially we thought of using a
+blocks of memory in which memory tracking of the cache is assumed through its contiguous nature. Initially we drafted the idea of using a
 self-balancing BST to do a search of the cache because we were focusing on quick retrieval but we came to realize that a BST is
-unnecessary and that we would just need to use the array structure to access the cache (searching, inserting, and retrieving).
+unnecessary and that we simply needed the array structure to access the cache for searching, inserting, and retrieving.
 In this case our main focus shifted to maintaining a cache with pages as contigous blocks of memory. We also initially thought of
-having the page be one large array of bytes where we would manually keep track of the memory locations but we came to learn that
-that would be a bit excessive and unnecessary to keep track of the specific memory bytes of the message since C already has the
-struct to manage contiguous blocks of memory for us.
+having the page be one large array of bytes where we would manually keep track of the memory locations and specific memory bytes. We even
+expanded the idea to potentially implement a union for managing the cache page memory structure but we came to learn that that would be
+a bit excessive and unnecessary to implement the union and byte size array since C already minimally has the struct to manage contiguous
+blocks of memory for us without being as excessive as a union which has the benefit of minimizing the size of memory of the cache and its pages
+which makes delivering the memory efficient and compact but, again, was a bit excessive for the required criteria.
 */
 
 typedef enum { LIFO, RANDOM } replacement_strategy;
