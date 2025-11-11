@@ -26,25 +26,6 @@
  * @return int - value for if successful or not
  */
 int main() {
-    // FIXME: having issues with deleting the created file id 21
-    // cleaning file made - remove the file that was just stored and decrement the _NEXT_ID by 1
-    
-    // 1.
-    // system("rm -f data/message21.txt");
-    // 2.
-    /*
-    const char *filename = create_filename(21);
-
-    // Attempt to delete the file
-    if (remove(filename) == 0) {
-        printf("File %s successfully deleted.\n", filename);
-    } else {
-        perror("Error deleting file");
-    }
-
-    update_next_id(-1);
-    */
-
     // TEST START
     PRINT_HEADER("create cache");
     cache_t* lifo_cache = create_cache(LIFO);
@@ -213,9 +194,14 @@ int main() {
     status = store_msg(msg1, NULL);
     PRINT_TEST_RESULTS(status == false, "expected false return if cache is NULL");
     
-    // TEST: test store message and next_id - commented out since don't want to always create a new message with the
+    // TEST: test store newly created message and next_id
     PRINT_HEADER("store new message to disk and LIFO cache and compare with retrieved");
-    message_t* msg = create_msg("Jasmine", "Peter", "Thanksgiving is around the corner, we have a special holiday rate for our Alaskan cruise! Call us at 888-888-8888.");
+
+    char* content_buffer = malloc(sizeof(char) * 100);
+    sprintf(content_buffer, "content for the message with ID = %d", get_next_id());
+    message_t* msg = create_msg("Person A", "Person B", content_buffer);
+    free(content_buffer);
+
     status = store_msg(msg, lifo_cache);
     PRINT_TEST_RESULTS(status == true, "stored message to disk and cache");
     actual_msg = retrieve_msg(get_next_id()-1, lifo_cache);
@@ -224,8 +210,6 @@ int main() {
     free_message(msg);
     free_message(actual_msg);
 
-
-    // PRINT_HEADER("retrieve_msg"); // TODO
     // TEST - retrieve msg from disk and cache
     PRINT_HEADER("retrieve 2nd message to disk and LIFO cache");
     actual_msg = retrieve_msg(2, lifo_cache);
@@ -247,8 +231,6 @@ int main() {
     free_message(actual_msg);
     */
 
-    // TEST - out-of-disk detection
-
     // TEST - other
     PRINT_HEADER("check what happens when printing a NULL cache");
     printf("\n");
@@ -257,7 +239,7 @@ int main() {
     print_cache_contents(NULL);
     printf("\n");
 
-
+    //cleanup
     free_message(msg0);
     free_message(msg1);
     free_message(msg2);

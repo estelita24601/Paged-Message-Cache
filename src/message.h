@@ -9,17 +9,16 @@
 #ifndef MESSAGES_H
 #define MESSAGES_H
 
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include <time.h>
 
 #include "cache.h"
 #include "config.h"
 #include "disk.h"
-
 
 /**
  * @brief Gets the next available message ID and updates the counter
@@ -32,13 +31,14 @@
 int get_next_id();
 
 /**
- * @brief updates the next available message ID
- *
- * increments the current ID read from a file and saves it back to the file.
- *
- * @param update_num int - number to change the next available message ID whether it be incrementing with a positive input val or decrementing with a negative input val
+ * @brief increments the id counter in the data/_NEXT_ID.txt file
  */
-void update_next_id(int update_num);
+void increment_next_id();
+
+/**
+ * @brief decrements the id counter in the data/_NEXT_ID.txt file
+ */
+void decrement_next_id();
 
 /**
  * @brief Creates a message object from its constituent parts
