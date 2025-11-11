@@ -13,6 +13,9 @@
 
 
 ## References:
+[^1]  
+[^2]  
+[^3]  
 [^1]: "Self-balancing binary search tree." Wikipedia, 11 Nov 2025. https://en.wikipedia.org/wiki/Self-balancing_binary_search_tree. Accessed: 2025-11-06. 
 [^2]: "AVL Tree Data Structure." GeeksforGeeks, 11 Oct 2025. https://www.geeksforgeeks.org/dsa/introduction-to-avl-tree/. Accessed: 2025-11-07. 
 [^3]: "Introduction to Red-Black Tree." GeeksforGeeks, 03 Nov 2025. https://www.geeksforgeeks.org/dsa/introduction-to-red-black-tree/. Accessed: 2025-11-07. 
