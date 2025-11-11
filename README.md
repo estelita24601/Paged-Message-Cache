@@ -17,16 +17,19 @@
 [^1]  
 [^2]  
 [^3]  
-[^1]: "Self-balancing binary search tree." Wikipedia, 11 Nov 2025. https://en.wikipedia.org/wiki/Self-balancing_binary_search_tree. Accessed: 2025-11-06. 
-[^2]: "AVL Tree Data Structure." GeeksforGeeks, 11 Oct 2025. https://www.geeksforgeeks.org/dsa/introduction-to-avl-tree/. Accessed: 2025-11-07. 
-[^3]: "Introduction to Red-Black Tree." GeeksforGeeks, 03 Nov 2025. https://www.geeksforgeeks.org/dsa/introduction-to-red-black-tree/. Accessed: 2025-11-07. 
+[^4]  
+[^5]  
+[^6]  
+[^7]  
+[^8]  
+[^9]   
 
-<!--
-- <https://www.programiz.com/c-programming/c-unions>
-- <https://www.geeksforgeeks.org/c/c-unions/>
-- <https://thelinuxcode.com/unions-in-c/>
-- <https://coderivers.org/c/c-basic/c-union/>
-
-- https://stackoverflow.com/questions/25152905/what-is-type-punning-how-type-punning-works-with-unions-in-c
-- https://www.geeksforgeeks.org/c/how-to-declare-struct-member-inside-union-in-c/
--->
+[^1]: "Self-balancing binary search tree." Wikipedia, 11 Nov 2025. https://en.wikipedia.org/wiki/Self-balancing_binary_search_tree. Accessed: 2025-11-05.  
+[^2]: "AVL Tree Data Structure." GeeksforGeeks, 11 Oct 2025. https://www.geeksforgeeks.org/dsa/introduction-to-avl-tree/. Accessed: 2025-11-05.  
+[^3]: "Introduction to Red-Black Tree." GeeksforGeeks, 03 Nov 2025. https://www.geeksforgeeks.org/dsa/introduction-to-red-black-tree/. Accessed: 2025-11-05.  
+[^4]: "C Unions." Programiz. https://www.programiz.com/c-programming/c-unions. Accessed: 2025-11-06.  
+[^5]: "Unions in C." GeeksforGeeks, 25 Oct 2025. https://www.geeksforgeeks.org/c/c-unions/. Accessed: 2025-11-06.  
+[^6]: "Unions in C: A Deep Dive." TheLinuxCode, 27 Dec 2023. https://thelinuxcode.com/unions-in-c/. Accessed: 2025-11-07.  
+[^7]: "Exploring C Unions: Concepts, Usage, and Best Practices." CodeRivers. https://coderivers.org/c/c-basic/c-union/. Accessed: 2025-11-07.  
+[^8]: "What is type punning? how type punning works with unions in C?." StackOverFlow, 06 Mar 2019. https://stackoverflow.com/questions/25152905/what-is-type-punning-how-type-punning-works-with-unions-in-c. Accessed: 2025-11-08.  
+[^9]: "How to Declare a Struct Member Inside a Union in C?." GeeksforGeeks, 23 Jul 2025. https://www.geeksforgeeks.org/c/how-to-declare-struct-member-inside-union-in-c/. Accessed: 2025-11-08.  
