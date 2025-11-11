@@ -1,6 +1,6 @@
 # Practicum I
 ## Instructions:
-1. Export files/folders.
+1. Export files / folders.
 2. Access Linux environment (bash, wsl, etc.).
 3. Navigate / cd to exported files / folders.
 4. Go to "src/config.h" to manually configure the size of message, number of messages that are cached, or other relevant configurations.
