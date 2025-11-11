@@ -11,7 +11,7 @@
 #include "message.h"
 
 #ifndef VERBOSE
-#define VERBOSE true
+#define VERBOSE false
 #endif
 
 void PRINT_VERBOSE(char* str) {

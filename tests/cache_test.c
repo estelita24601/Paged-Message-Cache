@@ -194,16 +194,30 @@ int main() {
     PRINT_TEST_RESULTS(status == false, "expected false return if cache is NULL");
     
     // TEST: test store message and next_id - commented out since don't want to always create a new message with the
-    /*
     PRINT_HEADER("store new message to disk and LIFO cache and compare with retrieved");
     message_t* msg = create_msg("Jasmine", "Peter", "Thanksgiving is around the corner, we have a special holiday rate for our Alaskan cruise! Call us at 888-888-8888.");
     status = store_msg(msg, lifo_cache);
     PRINT_TEST_RESULTS(status == true, "");
     actual_msg = retrieve_msg(get_next_id()-1, lifo_cache);
     PRINT_COMPARE_MESSAGES(msg, actual_msg);
+
+    // Name of the file to be deleted
+    /*
+    const char *file = "file.txt";
+
+    // Attempt to delete the file
+    if (remove(file) == 0) {
+        printf("File deleted successfully.\n");
+    } else {
+        printf("Error: Unable to delete the file.\n");
+    }
+    */
+
     free_message(msg);
     free_message(actual_msg);
-    */
+
+
+    // remove the file that was just stored and decrement the _NEXT_ID by 1
 
     // PRINT_HEADER("retrieve_msg"); // TODO
     // TEST - retrieve msg from disk and cache

@@ -17,7 +17,9 @@
 
 #include "config.h"
 
-
+/*
+Explanation and Reasoning of Strategy and Design:
+*/
 
 typedef enum { LIFO, RANDOM } replacement_strategy;
 
