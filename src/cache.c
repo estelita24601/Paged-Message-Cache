@@ -224,15 +224,15 @@ cache_page_t* init_page() {
 }
 
 /**
- * @brief - sets the initialized cache page with the provided message
+ * @brief - sets the cache page with the provided message
  *
  * @param page cache_page_t* - the pointer to the cache page object
  * @param msg message_t* - the pointer to the message object
  *
- * @return bool - true if page is set otherwise false
+ * @return true if the page was successfully filled with the message data
+ * @return false if the page was not filled with the message data
  */
-bool set_page(cache_page_t* page, const message_t* msg) {  // if set_page doesn't fill the page do we want the program
-                                                           // to gracefully return to the main program or crash?
+bool set_page(cache_page_t* page, const message_t* msg) {
     // make sure objects aren't null
     if (page == NULL) {
         printf("WARNING: trying to fill page that doesn't exist\n");
@@ -241,6 +241,7 @@ bool set_page(cache_page_t* page, const message_t* msg) {  // if set_page doesn'
         printf("WARNING: trying to fill page with a NULL message object\n");
         return false;
     }
+
     // make sure strings inside of message aren't null
     if (msg->sender == NULL || msg->receiver == NULL || msg->content == NULL) {
         printf("WARNING: trying to fill page with a message object that contains NULL string fields\n");
@@ -262,14 +263,27 @@ bool set_page(cache_page_t* page, const message_t* msg) {  // if set_page doesn'
     page->sent_flag = msg->sent_flag;
 
     // copy strings over
-    strncpy(page->sender, msg->sender, MAX_SENDER_SIZE - 1);
-    strncpy(page->receiver, msg->receiver, MAX_RECEIVER_SIZE - 1);
-    strncpy(page->content, msg->content, MAX_CONTENT_SIZE - 1);
-
-    // make sure strings are null terminated in case msg strings were truncated
-    page->sender[MAX_SENDER_SIZE - 1] = '\0';
-    page->receiver[MAX_RECEIVER_SIZE - 1] = '\0';
-    page->content[MAX_CONTENT_SIZE - 1] = '\0';
+    if (strlen(msg->sender) > MAX_SENDER_SIZE) {
+        printf("WARNING: sender string will be truncated because it is too long\n");
+        strncpy(page->sender, msg->sender, MAX_SENDER_SIZE - 1);
+        page->sender[MAX_SENDER_SIZE - 1] = '\0';
+    } else {
+        strncpy(page->sender, msg->sender, MAX_SENDER_SIZE);
+    }
+    if (strlen(msg->receiver) > MAX_RECEIVER_SIZE) {
+        printf("WARNING: receiver string will be truncated because it is too long\n");
+        strncpy(page->receiver, msg->receiver, MAX_RECEIVER_SIZE - 1);
+        page->receiver[MAX_RECEIVER_SIZE - 1] = '\0';
+    } else {
+        strncpy(page->receiver, msg->receiver, MAX_RECEIVER_SIZE);
+    }
+    if (strlen(msg->content) > MAX_CONTENT_SIZE) {
+        printf("WARNING: content string will be truncated because it is too long\n");
+        strncpy(page->content, msg->content, MAX_CONTENT_SIZE - 1);
+        page->content[MAX_CONTENT_SIZE - 1] = '\0';
+    } else {
+        strncpy(page->content, msg->content, MAX_CONTENT_SIZE);
+    }
 
     return true;
 }
