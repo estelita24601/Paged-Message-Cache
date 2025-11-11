@@ -11,7 +11,7 @@
 #include "message.h"
 
 #ifndef VERBOSE
-#define VERBOSE false
+#define VERBOSE true
 #endif
 
 void PRINT_VERBOSE(char* str) {
@@ -92,12 +92,12 @@ bool cache_add(cache_t* cache, message_t* msg) {
         switch (cache->strategy) {
             case LIFO:
                 page_to_replace = cache->page_array[cache->last_added];
-                PRINT_VERBOSE_NUM("LIFO replacement of page #%d\n", page_to_replace->id);
+                PRINT_VERBOSE_NUM("~~~LIFO replacement of page #%d\n", page_to_replace->id);
                 return replace_page(page_to_replace, msg);
             case RANDOM:
                 int random_index = rand() % cache->total_pages;
                 page_to_replace = cache->page_array[random_index];
-                PRINT_VERBOSE_NUM("RANDOM replacement of page #%d\n", page_to_replace->id);
+                PRINT_VERBOSE_NUM("~~~RANDOM replacement of page #%d\n", page_to_replace->id);
                 return replace_page(page_to_replace, msg);
             default:
                 printf("ERROR: cache does not have a replacement strategy\n");

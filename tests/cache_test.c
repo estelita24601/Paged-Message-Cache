@@ -39,6 +39,10 @@ int main() {
     message_t* msg4 = disk_find(4);
     message_t* msg5 = disk_find(5);
     message_t* msg6 = disk_find(6);
+    message_t* msg6 = disk_find(7);
+    message_t* msg6 = disk_find(8);
+    message_t* msg6 = disk_find(9);
+    message_t* msg6 = disk_find(10);
 
     PRINT_HEADER("add 1st message to the cache");
     bool status = cache_add(lifo_cache, msg0);
@@ -67,17 +71,17 @@ int main() {
     PRINT_HEADER("try to find message that isn't in the cache");
     page = cache_find(lifo_cache, 5);
     actual_msg = create_msg_from_page(page);
-    PRINT_TEST_RESULTS(actual_msg == NULL, "");
+    PRINT_TEST_RESULTS(actual_msg == NULL, "expected false return if message is NULL");
     free_message(actual_msg);
 
     // TEST - (edge case) add a NULL msg and invalid id to cache_find(..)
     PRINT_HEADER("try to find message in a cache that doesn't exist");
     page = cache_find(NULL, 2);
-    PRINT_TEST_RESULTS(page == NULL, "");
+    PRINT_TEST_RESULTS(page == NULL, "expected false return if cache is NULL");
 
     PRINT_HEADER("try to find message with an invalid id");
     page = cache_find(random_cache, -5);
-    PRINT_TEST_RESULTS(page == NULL, "");
+    PRINT_TEST_RESULTS(page == NULL, "expected false return if id is invalid");
     
 
     srand(time(NULL)); // Seed with current time - need to place outside of cache.c to fully randomize
@@ -133,12 +137,12 @@ int main() {
     // TEST - (edge case) store null msg to disk and LIFO cache
     PRINT_HEADER("store a NULL message to disk and cache");
     status = store_msg(NULL, lifo_cache);
-    PRINT_TEST_RESULTS(status == false, "");
+    PRINT_TEST_RESULTS(status == false, "expected false return if mesage is NULL");
 
     // TEST - (edge case) store msg to NULL cache
     PRINT_HEADER("store 1st message to disk and NULL cache");
     status = store_msg(msg1, NULL);
-    PRINT_TEST_RESULTS(status == false, "");
+    PRINT_TEST_RESULTS(status == false, "expected false return if cache is NULL");
     
     // TEST: test store message and next_id - commented out since don't want to always create a new message with the
     /*
