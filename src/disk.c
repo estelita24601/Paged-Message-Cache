@@ -76,7 +76,13 @@ bool disk_write(message_t* msg) {
 
         char* msg_csv = msg_to_csv(msg);
         if (msg_csv != NULL) {
-            fprintf(file, "%s", msg_csv);  // QUESTION: should this have \n at the end?
+            // make sure csv string isn't too large to write to disk
+            if (strlen(msg_csv) > MAX_CSV_LENGTH) {
+                printf("WARNING: message csv is too long! some message content will be lost\n");
+                msg_csv[MAX_CSV_LENGTH] = '\0';
+            }
+
+            fprintf(file, "%s", msg_csv);
             free(msg_csv);
             success = true;
         } else {
