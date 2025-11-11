@@ -219,6 +219,9 @@ cache_page_t* init_page() {
     }
     new_page->occupied = false;
     new_page->id = -1;
+    new_page->sender[0] = '\0';
+    new_page->receiver[0] = '\0';
+    new_page->content[0] = '\0';
 
     return new_page;
 }
@@ -367,7 +370,7 @@ void print_page(cache_page_t* page) {
         return;
     }
 
-    char* boolStr;
+    char* boolStr = NULL;
     if (page->occupied) {
         boolStr = "true";
     } else {

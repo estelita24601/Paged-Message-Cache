@@ -48,7 +48,7 @@ void cache_evaluate(cache_t* cache, int n) {
     }
 
     float cache_hits = (float) cache->hits / (n / 1000);
-    printf("\tCache Hits per 1,000 Accesses = %.2f (~%.f%%)\n", cache_hits, cache_hits / 10);
+    printf("\tCache Hits per 1,000 Accesses = %.2f (~%.f%% Cache Hit Ratio per 1,000 Accesses)\n", cache_hits, cache_hits / 10);
 
     float cache_miss = (float) cache->miss / (n / 1000);
     printf("\tCache Misses per 1,000 Accesses = %.2f (~%.f%%)\n", cache_miss, cache_miss / 10);
