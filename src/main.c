@@ -25,7 +25,7 @@ void cache_evaluate(cache_t* cache, int n) {
         printf("WARNING: trying to print contents of a cache that doesn't exist\n");
         return;
     }
-    
+
     int next_id = get_next_id();
 
     // fill cache in initial phase
@@ -39,33 +39,45 @@ void cache_evaluate(cache_t* cache, int n) {
     int random_index = -1;
     for (int i = 1; i <= n; i++) {
         if (next_id > -1) {
-            random_index = rand() % (next_id-1) + 1;
+            random_index = rand() % (next_id - 1) + 1;
         }
 
         // printf("%d\n", random_index);
         msg = retrieve_msg(random_index, cache);
         free_message(msg);
     }
-    printf("Cache Hts: %d/%d\n", cache->hits, n);
-    printf("Cache Miss: %d/%d\n", cache->miss, n);
+
+    float cache_hits = (float) cache->hits / (n / 1000);
+    printf("\tCache Hits per 1,000 Accesses = %.2f (~%.f%%)\n", cache_hits, cache_hits / 10);
+
+    float cache_miss = (float) cache->miss / (n / 1000);
+    printf("\tCache Misses per 1,000 Accesses = %.2f (~%.f%%)\n", cache_miss, cache_miss / 10);
 }
 
-
 int main(int argc, char* argv[]) {
+    int n = 0;
+
+    // optional arg to customize how many random message retrievals to do
+    if (argc == 2) {
+        n = atoi(argv[1]);
+    }
+
+    // default value
+    if (n <= 0) {
+        n = 10000;
+    }
 
     srand(time(NULL));  // Seed with current time
-    
+
     cache_t* lifo_cache = create_cache(LIFO);
     cache_t* random_cache = create_cache(RANDOM);
 
     printf("EVALUATE LIFO REPLACEMENT\n");
-    cache_evaluate(lifo_cache, 10000);
+    cache_evaluate(lifo_cache, n);
 
     printf("\nEVALUATE RANDOM REPLACEMENT\n");
-    cache_evaluate(random_cache, 10000);
+    cache_evaluate(random_cache, n);
 
     free_cache(lifo_cache);
     free_cache(random_cache);
-    
-    
 }
