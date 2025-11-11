@@ -32,32 +32,57 @@ int main() {
     print_cache_contents(lifo_cache);
 
     // create objects and values for testing
-    message_t* msg0 = disk_find(0);
+    message_t* msg0 = disk_find(20);
     message_t* msg1 = disk_find(1);
     message_t* msg2 = disk_find(2);
     message_t* msg3 = disk_find(3);
     message_t* msg4 = disk_find(4);
     message_t* msg5 = disk_find(5);
     message_t* msg6 = disk_find(6);
-    message_t* msg6 = disk_find(7);
-    message_t* msg6 = disk_find(8);
-    message_t* msg6 = disk_find(9);
-    message_t* msg6 = disk_find(10);
+    message_t* msg7 = disk_find(7);
+    message_t* msg8 = disk_find(8);
+    message_t* msg9 = disk_find(9);
+    message_t* msg10 = disk_find(10);
 
-    PRINT_HEADER("add 1st message to the cache");
+    PRINT_HEADER("add 1st message to the LIFO cache");
     bool status = cache_add(lifo_cache, msg0);
     PRINT_TEST_RESULTS(status == true, "");
     print_cache_metadata(lifo_cache);
     print_cache_contents(lifo_cache);
 
-    PRINT_HEADER("add 2nd message to the cache");
+    PRINT_HEADER("add 2nd message to the LIFO cache");
     status = cache_add(lifo_cache, msg1);
     PRINT_TEST_RESULTS(status == true, "");
     print_cache_metadata(lifo_cache);
     print_cache_contents(lifo_cache);
 
-    PRINT_HEADER("add 3rd message to the cache should trigger a LIFO replacement");
+    PRINT_HEADER("add 3rd message to the LIFO cache");
     status = cache_add(lifo_cache, msg2);
+    PRINT_TEST_RESULTS(status == true, "");
+    print_cache_metadata(lifo_cache);
+    print_cache_contents(lifo_cache);
+
+    // TEST - out-of-memory detection RANDOM replacement strategy
+    PRINT_HEADER("add 4th message to the LIFO cache");
+    status = cache_add(lifo_cache, msg3);
+    PRINT_TEST_RESULTS(status == true, "");
+    print_cache_metadata(lifo_cache);
+    print_cache_contents(lifo_cache);
+
+    PRINT_HEADER("add 5th message to the LIFO cache should trigger a LIFO replacement");
+    status = cache_add(lifo_cache, msg4);
+    PRINT_TEST_RESULTS(status == true, "");
+    print_cache_metadata(lifo_cache);
+    print_cache_contents(lifo_cache);
+
+    PRINT_HEADER("add 6th message to the LIFO cache should trigger a LIFO replacement");
+    status = cache_add(lifo_cache, msg6);
+    PRINT_TEST_RESULTS(status == true, "");
+    print_cache_metadata(lifo_cache);
+    print_cache_contents(lifo_cache);
+
+    PRINT_HEADER("add 7th message to the LIFO cache should trigger a LIFO replacement");
+    status = cache_add(lifo_cache, msg7);
     PRINT_TEST_RESULTS(status == true, "");
     print_cache_metadata(lifo_cache);
     print_cache_contents(lifo_cache);
@@ -123,6 +148,30 @@ int main() {
     print_cache_metadata(random_cache);
     print_cache_contents(random_cache);
 
+    PRINT_HEADER("add 7th message to the RANDOM cache should trigger a RANDOM replacement");
+    status = cache_add(random_cache, msg7);
+    PRINT_TEST_RESULTS(status == true, "");
+    print_cache_metadata(random_cache);
+    print_cache_contents(random_cache);
+
+    PRINT_HEADER("add 8th message to the RANDOM cache should trigger a RANDOM replacement");
+    status = cache_add(random_cache, msg8);
+    PRINT_TEST_RESULTS(status == true, "");
+    print_cache_metadata(random_cache);
+    print_cache_contents(random_cache);
+
+    PRINT_HEADER("add 9th message to the RANDOM cache should trigger a RANDOM replacement");
+    status = cache_add(random_cache, msg9);
+    PRINT_TEST_RESULTS(status == true, "");
+    print_cache_metadata(random_cache);
+    print_cache_contents(random_cache);
+
+    PRINT_HEADER("add 10th message to the RANDOM cache should trigger a RANDOM replacement");
+    status = cache_add(random_cache, msg10);
+    PRINT_TEST_RESULTS(status == true, "");
+    print_cache_metadata(random_cache);
+    print_cache_contents(random_cache);
+
     // TEST - (edge case) add a NULL message to the cache
     PRINT_HEADER("add empty message to the RANDOM cache");
     status = cache_add(random_cache, NULL);
@@ -166,7 +215,7 @@ int main() {
     // TEST - (edge case) retrieve msg from disk and NULL cache
     PRINT_HEADER("retrieve invalid message id to disk and LIFO cache");
     actual_msg = retrieve_msg(-2, lifo_cache);
-    PRINT_TEST_RESULTS(actual_msg == NULL, "");
+    PRINT_TEST_RESULTS(actual_msg == NULL, "expected NULL return if id is invalid");
     free_message(actual_msg);
 
 
