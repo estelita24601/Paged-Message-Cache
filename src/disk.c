@@ -4,9 +4,9 @@
 #include "disk.h"
 
 /**
- * @brief use the id number to create the properly formatted filename for this message
+ * @brief use the message id number to create the properly formatted filename for this message
  *
- * @param msg_id - int
+ * @param msg_id int - the id of the message to be used in the filename
  * @return char* - filename for this message ON THE HEAP
  */
 char* create_filename(int msg_id) {
@@ -21,6 +21,12 @@ char* create_filename(int msg_id) {
     return filename;
 }
 
+/**
+ * @brief use the message id to either find the message in disk
+ *
+ * @param id int - the message id used to find the message in disk
+ * @return message_t* - return the message found from the disk
+ */
 message_t* disk_find(int id) {
     char* expected_filename = create_filename(id);
 
@@ -46,6 +52,12 @@ message_t* disk_find(int id) {
     return msg;
 }
 
+/**
+ * @brief write the provided message to disk
+ *
+ * @param msg message_t* - the message to write to disk
+ * @return bool - return true if the message was written to disk, false otherwise
+ */
 bool disk_write(message_t* msg) {
     if (msg == NULL) {
         printf("ERROR: tried to store a NULL message\n");
