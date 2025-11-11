@@ -3,8 +3,13 @@
 1. Export files/folders.
 2. Access Linux environment (bash, wsl, etc.).
 3. Navigate / cd to exported files / folders.
-4. Run command `make test` inside this directory.
-    - To clean environment (remove files) run commane `make clean`
+4. Go to "src/config.h" to manually configure the size of message, number of messages that are cached, or other relevant configurations.
+5. Run commands below inside the directory of the Makefile to execute based on the desired make commands:
+  - `make main` - will run the evaluation which is the calculation of the cache metrics for each page replacement algorithm
+  - `make test_cache` - will run the tests for the cache and display the cache creation, execution of page replacement policy, and other relevant cache functions.
+  - `make test_page` - will run the tests for the cache pages and display the page creation, page replacement, and other relevant page functions.
+  - `make test_msg` - will run the tests for the messages and display the message creation, storing and retreiving messages, and other relevant message functions.
+6. To clean environment (remove files) run commane `make clean`
 
 
 ## References:
