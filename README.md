@@ -5,7 +5,8 @@
 3. Navigate / cd to exported files / folders.
 4. Go to "src/config.h" to manually configure the size of message, number of messages that are cached, or other relevant configurations.
 5. Run commands below inside the directory of the Makefile to execute based on the desired make commands:
-  - `make main` - will run the evaluation which is the calculation of the cache metrics for each page replacement algorithm
+  - `make main` - will run the evaluation which is the calculation of the cache metrics for each page replacement algorithm with an optional argument or a default of 10,000 random message accesses.
+    - Ex: `make main 500` - will run the evaluation with an optional argument of 500 random message accesses.
   - `make test_cache` - will run the tests for the cache and display the cache creation, execution of page replacement policy, and other relevant cache functions.
   - `make test_page` - will run the tests for the cache pages and display the page creation, page replacement, and other relevant page functions.
   - `make test_msg` - will run the tests for the messages and display the message creation, storing and retreiving messages, and other relevant message functions.
@@ -20,7 +21,7 @@
 [^2]: "AVL Tree Data Structure." GeeksforGeeks, 11 Oct 2025. https://www.geeksforgeeks.org/dsa/introduction-to-avl-tree/. Accessed: 2025-11-07. 
 [^3]: "Introduction to Red-Black Tree." GeeksforGeeks, 03 Nov 2025. https://www.geeksforgeeks.org/dsa/introduction-to-red-black-tree/. Accessed: 2025-11-07. 
 
-<!-->
+<!--
 - <https://www.programiz.com/c-programming/c-unions>
 - <https://www.geeksforgeeks.org/c/c-unions/>
 - <https://thelinuxcode.com/unions-in-c/>
