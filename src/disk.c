@@ -45,9 +45,9 @@ message_t* disk_find(int id) {
             msg = create_msg_from_str(buffer);
         }
         free(buffer);
+        fclose(msg_file);
     }
 
-    fclose(msg_file);
     free(expected_filename);
     return msg;
 }
