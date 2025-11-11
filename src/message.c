@@ -31,24 +31,34 @@ int get_next_id() {
     return next_id;
 }
 
+bool replace_next_id(int new_id){
+	FILE* id_file = fopen(NEXT_ID_PATH, "w");
+    if (id_file) {
+        fprintf(id_file, "%d", new_id);
+        fclose(id_file);
+		return true;
+    } else {
+        printf("WARNING: unable to save ID to file\n");
+		return false;
+    }
+}
+
 /**
  * @brief updates the next available message ID
  *
  * increments the current ID read from a file and saves it back to the file.
  *
  */
-void update_next_id(int update_num) {
+void increment_next_id() {
     int next_id = get_next_id();
-
-    // update file with next ID number
-    FILE* id_file = fopen(NEXT_ID_PATH, "w");
-    if (id_file) {
-        fprintf(id_file, "%d", next_id + update_num);
-        fclose(id_file);
-    } else {
-        printf("WARNING: unable to save ID to file, next message ID will likely clash\n");
-    }
+	replace_next_id(next_id + 1);
 }
+
+void decrement_next_id(){
+	int next_id = get_next_id();
+    replace_next_id(next_id - 1);
+}
+
 
 /**
  * @brief Creates a message object from its constituent parts
@@ -106,7 +116,7 @@ message_t* create_msg(const char* sender, const char* receiver, const char* cont
     time_t now;
     time(&now);
     int id = get_next_id();
-    update_next_id(1);
+    increment_next_id();
     bool sent_flag = false;
 
     return create_msg_from_parts(id, sender, receiver, content, now, sent_flag);
