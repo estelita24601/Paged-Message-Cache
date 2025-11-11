@@ -36,8 +36,9 @@ int get_next_id();
  *
  * increments the current ID read from a file and saves it back to the file.
  *
+ * @param update_num int - number to change the next available message ID whether it be incrementing with a positive input val or decrementing with a negative input val
  */
-void update_next_id();
+void update_next_id(int update_num);
 
 /**
  * @brief Creates a message object from its constituent parts

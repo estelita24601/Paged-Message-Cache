@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "helpers.h"
 
@@ -25,7 +26,26 @@
  * @return int - value for if successful or not
  */
 int main() {
+    // FIXME: having issues with deleting the created file id 21
+    // cleaning file made - remove the file that was just stored and decrement the _NEXT_ID by 1
+    
+    // 1.
+    // system("rm -f data/message21.txt");
+    // 2.
+    /*
+    const char *filename = create_filename(21);
 
+    // Attempt to delete the file
+    if (remove(filename) == 0) {
+        printf("File %s successfully deleted.\n", filename);
+    } else {
+        perror("Error deleting file");
+    }
+
+    update_next_id(-1);
+    */
+
+    // TEST START
     PRINT_HEADER("create cache");
     cache_t* lifo_cache = create_cache(LIFO);
     cache_t* random_cache = create_cache(RANDOM);
@@ -197,27 +217,13 @@ int main() {
     PRINT_HEADER("store new message to disk and LIFO cache and compare with retrieved");
     message_t* msg = create_msg("Jasmine", "Peter", "Thanksgiving is around the corner, we have a special holiday rate for our Alaskan cruise! Call us at 888-888-8888.");
     status = store_msg(msg, lifo_cache);
-    PRINT_TEST_RESULTS(status == true, "");
+    PRINT_TEST_RESULTS(status == true, "stored message to disk and cache");
     actual_msg = retrieve_msg(get_next_id()-1, lifo_cache);
     PRINT_COMPARE_MESSAGES(msg, actual_msg);
-
-    // Name of the file to be deleted
-    /*
-    const char *file = "file.txt";
-
-    // Attempt to delete the file
-    if (remove(file) == 0) {
-        printf("File deleted successfully.\n");
-    } else {
-        printf("Error: Unable to delete the file.\n");
-    }
-    */
 
     free_message(msg);
     free_message(actual_msg);
 
-
-    // remove the file that was just stored and decrement the _NEXT_ID by 1
 
     // PRINT_HEADER("retrieve_msg"); // TODO
     // TEST - retrieve msg from disk and cache
