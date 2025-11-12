@@ -21,7 +21,9 @@
 Explanation and Reasoning of Strategy and Design:
 We decided to use an array data structure and the struct type defintion for our cache strategy and design because the array
 allows us to do a linear search to access the cache with a speed of O(1) for the replacement policy while the struct provides contiguous
-blocks of memory in which memory tracking of the cache is assumed through its contiguous nature. Initially we drafted the idea of using a
+blocks of memory in which memory tracking of the cache is assumed through its contiguous natur. Also since the replacement policy uses a LIFO or
+random replacement strategy the array allows quick and easy access to the end or anywhere in the cache for the LIFO or RANDOM
+page replacement. Initially we drafted the idea of using a
 self-balancing BST to do a search of the cache because we were focusing on quick retrieval but we came to realize that a BST is
 unnecessary and that we simply needed the array structure to access the cache for searching, inserting, and retrieving.
 In this case our main focus shifted to maintaining a cache with pages as contigous blocks of memory. We also initially thought of
