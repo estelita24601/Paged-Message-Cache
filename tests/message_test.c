@@ -130,6 +130,7 @@ int main() {
     message_t* msg_all_null = create_msg(NULL, NULL, "hello");
     assert(msg_all_null == NULL);
 
+    // tests message by checking its csv format
     PRINT_HEADER("msg_to_csv");
     // NEW EXPECTED FORMAT: id,sender,receiver,time_sent,sent_flag,content
     // TIME_FORMAT = "%Y-%m-%d %H:%M:%S"

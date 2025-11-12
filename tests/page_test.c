@@ -14,28 +14,32 @@
 
 int main() {
     bool actual;
-
+    // tests initialization of cache page
     PRINT_HEADER("init empty page");
     cache_page_t* page1 = init_page();
     print_page(page1);
 
+    // tests loading of message into cache page
     PRINT_HEADER("load message into page");
     message_t* msg1 = create_msg_from_str("0,obi-wan,grievous,2025-10-31 20:40:55,0,hello there");
     actual = set_page(page1, msg1);
     print_page(page1);
     PRINT_TEST_RESULTS(actual == true, "");
 
+    // clears the cache page
     PRINT_HEADER("clear message from the page");
     actual = clear_page(page1);
     print_page(page1);
     PRINT_TEST_RESULTS(actual == true, "");
 
+    // repeat cache page loading
     PRINT_HEADER("load message into page again");
     message_t* msg2 = create_msg_from_str("2,alexander,angelica,2025-10-31 21:40:55,0,my dearest, angelica");
     actual = set_page(page1, msg2);
     print_page(page1);
     PRINT_TEST_RESULTS(actual == true, "");
 
+    // edge cases
     PRINT_HEADER("edge case of trying to fill already filled page");
     actual = set_page(page1, msg1);
     PRINT_TEST_RESULTS(actual == false, "expected the function to prevent unauthorized overwrite of filled page");
@@ -49,6 +53,7 @@ int main() {
     actual = set_page(NULL, msg1);
     PRINT_TEST_RESULTS(actual == false, "expected the function to catch if page is NULL");
 
+    // create message from page
     PRINT_HEADER("create message from page");
     set_page(page1, msg1);
     message_t* actual_msg = create_msg_from_page(page1);
