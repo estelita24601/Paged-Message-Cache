@@ -124,7 +124,7 @@ bool cache_add(cache_t* cache, message_t* msg) {
  */
 cache_page_t* cache_find(cache_t* cache, int id) {
     if (id < 0) {
-        printf("WARNING: cannot find page, invalid id\n");
+        printf("WARNING: cannot find page, invalid message id\n");
         return NULL;
     }
 
@@ -133,11 +133,18 @@ cache_page_t* cache_find(cache_t* cache, int id) {
         return NULL;
     }
 
-    int curr_msg_id = -1;
+    // linear search
     for (int i = 0; i < cache->pages_occupied; i++) {
-        curr_msg_id = cache->page_array[i]->id;
-        if (curr_msg_id == id) {
-            return cache->page_array[i];
+        cache_page_t* curr_page = cache->page_array[i];
+
+        // double check this is a valid page to read from
+        if (curr_page == NULL || curr_page->occupied == false) {
+            continue;
+        }
+
+        // check if this page holds the message with the same id number
+        if (curr_page->id == id) {
+            return curr_page;
         }
     }
 
@@ -295,7 +302,6 @@ bool set_page(cache_page_t* page, const message_t* msg) {
  * @brief - clears the cache page to prepare to set a new message input
  *
  * @param page cache_page_t* - the pointer to the cache page object
- *
  * @return bool - true if page is cleared otherwise false
  */
 bool clear_page(cache_page_t* page) {

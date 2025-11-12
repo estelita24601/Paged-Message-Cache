@@ -10,8 +10,6 @@
 
 #include "message.h"
 
-// static int NEXT_ID;
-
 /**
  * @brief Gets the next available message ID from the file
  *
@@ -58,7 +56,6 @@ void decrement_next_id(){
 	int next_id = get_next_id();
     replace_next_id(next_id - 1);
 }
-
 
 /**
  * @brief Creates a message object from its constituent parts
