@@ -32,15 +32,17 @@ This project was built for a systems programming midterm focused on simulating h
 - Makefile-based builds
 - Systems-level documentation
 
-## Project Structure
 
-```text
-src/
-  config.h        # Cache and message configuration
-  ...
-Makefile          # Build and test commands
-README.md
-```
+## Evaluation
+
+The project instruments cache behavior and reports metrics for both supported replacement policies:
+
+- Cache hits
+- Cache misses
+- Cache hit ratio
+
+Metrics are calculated over a configurable number of random message accesses.
+
 
 ## Configuration
 
@@ -99,15 +101,30 @@ make test_msg
 make clean
 ```
 
-## Evaluation
 
-The project instruments cache behavior and reports metrics for both supported replacement policies:
+## Project Structure
 
-- Cache hits
-- Cache misses
-- Cache hit ratio
+```text
+.
+├── src/              # Main C source and header files
+├── tests/            # Unit tests for messages, pages, and cache behavior
+├── data/             # Disk-backed message storage files
+├── Makefile          # Build, test, run, and clean commands
+├── Instructions.md   # Original project instructions
+└── README.md         # Project overview and usage
+```
 
-Metrics are calculated over a configurable number of random message accesses.
+### Key implementation files:
+
+```text
+src/cache.c/.h        # Cache implementation and replacement policies
+src/message.c/.h      # Message creation, serialization, and retrieval logic
+src/disk.c/.h         # Disk-backed storage helpers
+src/config.h          # Cache/message configuration values
+src/main.c            # Evaluation driver for cache metrics
+tests/*.c             # Unit tests
+```
+
 
 ## References
 
