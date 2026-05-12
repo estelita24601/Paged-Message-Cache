@@ -1,24 +1,122 @@
-## Instructions:
-1. Export files / folders.
-2. Access Linux environment (bash, wsl, etc.).
-3. Navigate / cd to exported files / folders.
-4. Go to "src/config.h" to manually configure the size of message, number of messages that are cached, or other relevant configurations.
-5. Run commands below inside the directory of the Makefile to execute based on the desired make commands:
-  - `make main` - will run the evaluation which is the calculation of the cache metrics for each page replacement algorithm with an optional argument or a default of 10,000 random message accesses.
-    - Ex: `make main 500` - will run the evaluation with an optional argument of 500 random message accesses.
-  - `make test_cache` - will run the tests for the cache and display the cache creation, execution of page replacement policy, and other relevant cache functions.
-  - `make test_page` - will run the tests for the cache pages and display the page creation, page replacement, and other relevant page functions.
-  - `make test_msg` - will run the tests for the messages and display the message creation, storing and retreiving messages, and other relevant message functions.
-6. To clean environment (remove files) run commane `make clean`
+# Paged Message Cache
 
+A C-based disk-backed message cache simulator that demonstrates core operating systems concepts, including hierarchical memory, fixed-size pages, cache lookup, and page replacement policies.
 
-## References:
-[1]: "Self-balancing binary search tree." Wikipedia, 11 Nov 2025. https://en.wikipedia.org/wiki/Self-balancing_binary_search_tree. Accessed: 2025-11-05.  
-[2]: "AVL Tree Data Structure." GeeksforGeeks, 11 Oct 2025. https://www.geeksforgeeks.org/dsa/introduction-to-avl-tree/. Accessed: 2025-11-05.  
-[3]: "Introduction to Red-Black Tree." GeeksforGeeks, 03 Nov 2025. https://www.geeksforgeeks.org/dsa/introduction-to-red-black-tree/. Accessed: 2025-11-05.  
-[4]: "C Unions." Programiz. https://www.programiz.com/c-programming/c-unions. Accessed: 2025-11-06.  
-[5]: "Unions in C." GeeksforGeeks, 25 Oct 2025. https://www.geeksforgeeks.org/c/c-unions/. Accessed: 2025-11-06.  
-[6]: "Unions in C: A Deep Dive." TheLinuxCode, 27 Dec 2023. https://thelinuxcode.com/unions-in-c/. Accessed: 2025-11-07.  
-[7]: "Exploring C Unions: Concepts, Usage, and Best Practices." CodeRivers. https://coderivers.org/c/c-basic/c-union/. Accessed: 2025-11-07.  
-[8]: "What is type punning? how type punning works with unions in C?." StackOverFlow, 06 Mar 2019. https://stackoverflow.com/questions/25152905/what-is-type-punning-how-type-punning-works-with-unions-in-c. Accessed: 2025-11-08.  
-[9]: "How to Declare a Struct Member Inside a Union in C?." GeeksforGeeks, 23 Jul 2025. https://www.geeksforgeeks.org/c/how-to-declare-struct-member-inside-union-in-c/. Accessed: 2025-11-08.  
+This project was built for a systems programming midterm focused on simulating how data can be cached in memory while also being persisted to disk. Messages are stored in a configurable in-memory cache and written to disk for long-term storage. When a message is requested, the program checks the cache first, then loads from disk on a cache miss.
+
+## Features
+
+- Fixed-size message records stored in memory and on disk
+- Configurable cache size and message size through `src/config.h`
+- Disk-backed message storage
+- Cache-first message retrieval
+- Lookup structures for finding cached messages efficiently
+- Page replacement algorithms:
+  - Random Replacement
+  - LIFO Replacement
+- Unit tests for:
+  - Messages
+  - Cache pages
+  - Cache behavior
+- Cache performance evaluation using random message accesses
+
+## Concepts Demonstrated
+
+- C programming
+- Memory hierarchy simulation
+- Cache design
+- Page replacement algorithms
+- Disk I/O
+- Fixed-size data structures
+- Unit testing
+- Makefile-based builds
+- Systems-level documentation
+
+## Project Structure
+
+```text
+src/
+  config.h        # Cache and message configuration
+  ...
+Makefile          # Build and test commands
+README.md
+```
+
+## Configuration
+
+Before running the project, settings can be adjusted in `src/config.h`
+
+This file controls values such as:
+
+- Message size
+- Number of messages cached
+- Page/cache configuration
+- Other relevant project constants
+
+## Build and Run
+
+Run all commands from the directory containing the `Makefile`.
+
+### Run cache evaluation
+
+```bash
+make main
+```
+
+By default, this runs the cache evaluation using 10,000 random message accesses.
+
+You can also provide a custom number of accesses:
+
+```bash
+make main 500
+```
+
+This runs the evaluation using 500 random message accesses.
+
+### Run tests
+
+Test cache behavior:
+
+```bash
+make test_cache
+```
+
+Test cache page behavior:
+
+```bash
+make test_page
+```
+
+Test message creation, storage, and retrieval:
+
+```bash
+make test_msg
+```
+
+### Clean generated files
+
+```bash
+make clean
+```
+
+## Evaluation
+
+The project instruments cache behavior and reports metrics for both supported replacement policies:
+
+- Cache hits
+- Cache misses
+- Cache hit ratio
+
+Metrics are calculated over a configurable number of random message accesses.
+
+## References
+
+1. “Self-balancing binary search tree.” Wikipedia.
+2. “AVL Tree Data Structure.” GeeksforGeeks.
+3. “Introduction to Red-Black Tree.” GeeksforGeeks.
+4. “C Unions.” Programiz.
+5. “Unions in C.” GeeksforGeeks.
+6. “Unions in C: A Deep Dive.” TheLinuxCode.
+7. “Exploring C Unions: Concepts, Usage, and Best Practices.” CodeRivers.
+8. “What is type punning? How type punning works with unions in C?” Stack Overflow.
+9. “How to Declare a Struct Member Inside a Union in C?” GeeksforGeeks.
