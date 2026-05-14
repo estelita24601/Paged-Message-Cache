@@ -1,139 +1,120 @@
 # Paged Message Cache
 
-A C-based disk-backed message cache simulator that demonstrates core operating systems concepts, including hierarchical memory, fixed-size pages, cache lookup, and page replacement policies.
+A C-based message cache simulator that demonstrates core operating systems concepts: disk-backed storage, in-memory caching, fixed-size data structures, and page replacement policies. (Team project, 2 people)
 
-This project was built for a systems programming midterm focused on simulating how data can be cached in memory while also being persisted to disk. Messages are stored in a configurable in-memory cache and written to disk for long-term storage. When a message is requested, the program checks the cache first, then loads from disk on a cache miss.
+## Project Overview
 
-## Features
+This project implements a disk-backed message cache with configurable size and message format. Messages are stored in a fixed-size in-memory cache and persisted to disk. Cache lookups prioritize memory; cache misses load from disk and update the cache. When the cache is full, messages are evicted using one of two replacement policies.
 
-- Fixed-size message records stored in memory and on disk
-- Configurable cache size and message size through `src/config.h`
-- Disk-backed message storage
-- Cache-first message retrieval
-- Lookup structures for finding cached messages efficiently
-- Page replacement algorithms:
-  - Random Replacement
-  - LIFO Replacement
-- Unit tests for:
-  - Messages
-  - Cache pages
-  - Cache behavior
-- Cache performance evaluation using random message accesses
+## Core Features
 
-## Concepts Demonstrated
+* Fixed-size message records (configurable through compile-time config)
+* In-memory cache with disk persistence
+* Cache-first message retrieval (check cache, load from disk on miss)
+* Two page replacement policies:
+  * **LIFO:** Most recently added message is evicted
+  * **Random:** Random message is evicted
+* Unit tests for messages, cache pages, and cache behavior
+* Instrumented evaluation: cache hits, misses, and hit ratio over random accesses
 
-- C programming
-- Memory hierarchy simulation
-- Cache design
-- Page replacement algorithms
-- Disk I/O
-- Fixed-size data structures
-- Unit testing
-- Makefile-based builds
-- Systems-level documentation
+## Cache Components
 
+**Message (`message_t`):** Represents a message with sender, receiver, content, timestamp, and delivery flag.
 
-## Evaluation
+**Cache Page (`cache_page_t`):** Fixed-size struct holding a message with metadata (occupied flag, sender/receiver/content fields).
 
-The project instruments cache behavior and reports metrics for both supported replacement policies:
+**Cache (`cache_t`):** Array of cache pages with metadata tracking (strategy, total pages, pages occupied, hit/miss counts).
 
-- Cache hits
-- Cache misses
-- Cache hit ratio
-
-Metrics are calculated over a configurable number of random message accesses.
-
+**Lookup Strategy:** Linear search through the cache array. For this project scope (configurable cache size, typically dozens of pages), linear search is appropriate and straightforward. A hash table would add complexity without proportional benefit.
 
 ## Configuration
 
-Before running the project, settings can be adjusted in `src/config.h`
+Cache behavior is controlled at compile time through `src/config.h`:
 
-This file controls values such as:
+* `MAX_MESSAGE_SIZE` — fixed size of each cached message
+* `CACHE_SIZE` — maximum number of messages in cache
+* Message field sizes (sender, receiver, content)
 
-- Message size
-- Number of messages cached
-- Page/cache configuration
-- Other relevant project constants
+Modify these values and recompile to test different cache configurations.
+
+
+## Concepts Demonstrated
+
+* Memory hierarchy and caching
+* Paging and page replacement algorithms
+* Fixed-size data structures in C
+* Disk I/O and persistence
+* Struct-based data organization
+* Unit testing in C
+* Makefile builds
+* Cache performance metrics
+
+## Testing
+
+The project includes unit tests for:
+
+* **Message (`test_msg.c`):** Message creation, serialization, and field integrity
+* **Cache Page (`test_page.c`):** Page occupation, data storage, and field access
+* **Cache (`test_cache.c`):** Insert/retrieve operations, both replacement policies, cache full behavior
+
+Run `make test_cache` (or `test_msg`/`test_page`) to execute tests and verify correct behavior.
+
+## Evaluation
+
+The evaluation driver (`main.c`) performs random message accesses against the cache and measures:
+
+* Number of cache hits
+* Number of cache misses
+* Hit ratio (hits / total accesses)
+
+Metrics are calculated separately for **LIFO** and **Random** replacement policies to compare their performance on the same access pattern.
+
 
 ## Build and Run
 
-Run all commands from the directory containing the `Makefile`.
+**Evaluate cache performance:**
 
-### Run cache evaluation
-
-```bash
+```
 make main
 ```
 
-By default, this runs the cache evaluation using 10,000 random message accesses.
+Runs the evaluation using 10,000 random message accesses (default).
 
-You can also provide a custom number of accesses:
-
-```bash
-make main 500
+```
+make main ACCESSES=5000
 ```
 
-This runs the evaluation using 500 random message accesses.
+Run evaluation with custom access count.
 
-### Run tests
+**Run unit tests:**
 
-Test cache behavior:
-
-```bash
-make test_cache
+```
+make test_msg       # Test message creation and storage
+make test_page      # Test cache page behavior
+make test_cache     # Test cache operations and replacement
 ```
 
-Test cache page behavior:
+**Clean built files:**
 
-```bash
-make test_page
 ```
-
-Test message creation, storage, and retrieval:
-
-```bash
-make test_msg
-```
-
-### Clean generated files
-
-```bash
 make clean
 ```
 
-
 ## Project Structure
 
-```text
+```
 .
-├── src/              # Main C source and header files
-├── tests/            # Unit tests for messages, pages, and cache behavior
-├── data/             # Disk-backed message storage files
-├── Makefile          # Build, test, run, and clean commands
-├── Instructions.md   # Original project instructions
-└── README.md         # Project overview and usage
+├── src/
+│   ├── cache.c/.h          # Cache implementation, page replacement
+│   ├── message.c/.h        # Message creation, serialization
+│   ├── disk.c/.h           # Disk I/O helpers
+│   ├── config.h            # Configuration constants
+│   └── main.c              # Evaluation driver
+├── tests/
+│   ├── test_msg.c          # Message unit tests
+│   ├── test_page.c         # Cache page unit tests
+│   └── test_cache.c        # Cache behavior unit tests
+├── data/                   # Disk-backed message storage
+├── Makefile
+└── README.md
 ```
-
-### Key implementation files:
-
-```text
-src/cache.c/.h        # Cache implementation and replacement policies
-src/message.c/.h      # Message creation, serialization, and retrieval logic
-src/disk.c/.h         # Disk-backed storage helpers
-src/config.h          # Cache/message configuration values
-src/main.c            # Evaluation driver for cache metrics
-tests/*.c             # Unit tests
-```
-
-
-## References
-
-1. “Self-balancing binary search tree.” Wikipedia.
-2. “AVL Tree Data Structure.” GeeksforGeeks.
-3. “Introduction to Red-Black Tree.” GeeksforGeeks.
-4. “C Unions.” Programiz.
-5. “Unions in C.” GeeksforGeeks.
-6. “Unions in C: A Deep Dive.” TheLinuxCode.
-7. “Exploring C Unions: Concepts, Usage, and Best Practices.” CodeRivers.
-8. “What is type punning? How type punning works with unions in C?” Stack Overflow.
-9. “How to Declare a Struct Member Inside a Union in C?” GeeksforGeeks.
